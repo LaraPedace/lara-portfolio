@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { proyectos } from "../data/proyectos.js";
+import { TransitionLink } from "./PageTransition.jsx";
 import "./Proyectos.css";
 
 const VISTAS = ["lista", "grilla"];
@@ -67,8 +68,8 @@ function Proyectos() {
       >
         {proyectos.map((proyecto) => (
           <li key={proyecto.id} className={lista ? "lg:border-t lg:border-black/20" : ""}>
-            <a
-              href={`/proyectos/${proyecto.id}`}
+            <TransitionLink
+              to={`/proyectos/${proyecto.id}`}
               className={`group flex flex-col transition-colors duration-300 hover:text-rojo ${
                 lista ? "lg:grid lg:grid-cols-12 lg:gap-x-5 lg:pt-4.75 lg:pb-12.5" : ""
               }`}
@@ -103,7 +104,7 @@ function Proyectos() {
                   {proyecto.descripcion}
                 </p>
               )}
-            </a>
+            </TransitionLink>
           </li>
         ))}
       </ul>

@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "./PageTransition.jsx";
 import star from "../assets/img/STAR.svg";
 
 function Header() {
@@ -19,12 +19,12 @@ function Header() {
 
   return (
     <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between px-4 xl:px-8 pt-5">
-      <Link to="/info" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
+      <TransitionLink to="/info" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
         Info
-      </Link>
+      </TransitionLink>
 
       {/* La estrella se dibuja con una máscara (en vez de <img>) para poder cambiarle el color */}
-      <Link to="/" aria-label="Inicio" className="group">
+      <TransitionLink to="/" aria-label="Inicio" className="group">
         <span
           ref={starRef}
           aria-hidden="true"
@@ -40,11 +40,11 @@ function Header() {
             WebkitMaskPosition: "center",
           }}
         />
-      </Link>
+      </TransitionLink>
 
-      <Link to="/" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
+      <TransitionLink to="/" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
         Work
-      </Link>
+      </TransitionLink>
     </header>
   );
 }

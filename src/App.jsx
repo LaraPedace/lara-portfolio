@@ -7,6 +7,7 @@ import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import Info from './pages/Info.jsx'
+import { PageTransitionProvider } from './components/PageTransition.jsx'
 
 // Si la persona pidió menos animaciones en su sistema, el scroll queda normal
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -30,13 +31,16 @@ const App = () => {
   return (
     <ReactLenis root options={{ smoothWheel: !reduceMotion }}>
       <BrowserRouter>
-        <ScrollToTop />
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/info" element={<Info />} />
-        </Routes>
-        <Footer />
+        {/* Cortina roja entre páginas: los links usan <TransitionLink> */}
+        <PageTransitionProvider>
+          <ScrollToTop />
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/info" element={<Info />} />
+          </Routes>
+          <Footer />
+        </PageTransitionProvider>
       </BrowserRouter>
     </ReactLenis>
   )

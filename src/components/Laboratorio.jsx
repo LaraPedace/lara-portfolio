@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { useLenis } from "lenis/react";
 import { lab } from "../data/lab.js";
+import { usePageTransition } from "./pageTransitionContext.js";
 import "./Laboratorio.css";
 
 // ─── Ajustes ───────────────────────────────────────────────────────────────
@@ -73,6 +74,7 @@ function Laboratorio() {
   const [inmersivo, setInmersivo] = useState(false);
   const [abierta, setAbierta] = useState(null); // pieza abierta en grande
   const lenis = useLenis();
+  const navegar = usePageTransition();
   const cortinaRef = useRef(null);
   const enTransicion = useRef(false);
 
@@ -335,7 +337,8 @@ function Laboratorio() {
   });
 
   function abrir(item) {
-    if (item.href) window.location.href = item.href;
+    // Si la pieza tiene página propia, se va con la cortina; si no, se abre en grande
+    if (item.href) navegar(item.href);
     else setAbierta(item);
   }
 

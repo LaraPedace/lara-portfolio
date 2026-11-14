@@ -347,7 +347,10 @@ function Laboratorio() {
 
   return (
     <section ref={sectionRef} id="laboratorio" className="relative h-svh overflow-x-clip bg-white text-black">
-      <div className={inmersivo ? "fixed inset-0 z-60 bg-white" : "absolute inset-0"}>
+      {/* En la página: "isolate" agrupa las capas del Laboratorio (título z-50, miniaturas
+          z-0 a z-40) para que no compitan con el header (también z-50) y queden debajo.
+          En pantalla completa: z-60, por encima del header a propósito. */}
+      <div className={inmersivo ? "fixed inset-0 z-60 bg-white" : "absolute inset-0 isolate"}>
         {/* Lienzo */}
         <div
           ref={stageRef}

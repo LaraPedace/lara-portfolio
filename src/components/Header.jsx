@@ -18,9 +18,9 @@ function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between px-4 xl:px-8 pt-5">
-      <TransitionLink to="/info" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
-        Info
+    <header className="fixed top-0 bg-white/70 backdrop-blur-xl left-0 z-50 flex w-full items-center justify-between px-4 xl:px-8 py-2 md:py-4">
+      <TransitionLink to="/info" className=" text-lg xl:text-base font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
+        SOBRE MÍ
       </TransitionLink>
 
       {/* La estrella se dibuja con una máscara (en vez de <img>) para poder cambiarle el color */}
@@ -42,8 +42,8 @@ function Header() {
         />
       </TransitionLink>
 
-      <TransitionLink to="/" className="text-xl font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
-        Work
+      <TransitionLink to="/proyectos" className="text-lg xl:text-base font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
+        PROYECTOS
       </TransitionLink>
     </header>
   );

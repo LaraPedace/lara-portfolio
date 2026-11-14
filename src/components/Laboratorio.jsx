@@ -335,7 +335,7 @@ function Laboratorio() {
 
         {/* Título fijo a la izquierda + botón entrar / salir */}
         <div className="pointer-events-none absolute top-1/2 left-4 z-50 -translate-y-1/2 xl:left-8">
-          <h2 className="max-w-[6em] text-3xl leading-none font-medium tracking-tighter xl:text-4xl">
+          <h2 className="max-w-[6em] text-5xl leading-none font-medium tracking-tighter xl:text-4xl">
             El Laboratorio de Lara
           </h2>
           <button

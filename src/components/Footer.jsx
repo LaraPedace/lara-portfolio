@@ -15,7 +15,7 @@ function Footer() {
     >
       <div className="flex flex-col md:flex-row md:justify-between leading-none">
         {/* Título */}
-        <div className="flex flex-col gap-0 text-display-sm md:text-display leading-none">
+        <div className="flex flex-col gap-0 tracking-tighter text-display-sm md:text-display leading-none">
           <h2>Trabajemos</h2>
           <h2>En conjunto</h2>
         </div>

@@ -394,10 +394,17 @@ function Laboratorio() {
       <div
         ref={cortinaRef}
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-80 bg-rojo"
+        className="pointer-events-none fixed inset-0 z-80"
         // transform: misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría).
         // display: none mientras no anima (ver cambiarModo: Safari de iPhone).
-        style={{ transform: "translateX(-100%)", display: "none" }}
+        // El rojo va como background-image y NO como background-color (bg-rojo): Safari de
+        // iPhone pinta la barra de estado y la de abajo con el background-color de los
+        // elementos fijos que tocan los bordes, y se quedaba con el rojo de la cortina.
+        style={{
+          transform: "translateX(-100%)",
+          display: "none",
+          backgroundImage: "linear-gradient(var(--color-rojo, #ff0a0a), var(--color-rojo, #ff0a0a))",
+        }}
       />
     </section>
   );

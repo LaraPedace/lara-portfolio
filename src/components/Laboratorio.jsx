@@ -18,6 +18,12 @@ const WHEEL = 0.6; // velocidad con la rueda / trackpad (pantalla completa)
 const WIPE_MS = 400;
 const WIPE_EASING = "cubic-bezier(0.76, 0, 0.24, 1)"; // arranca rápido y frena al final
 
+// Sonido "tick" al pasar el mouse por una pieza (pantalla completa, desktop)
+const TICK_HZ = 2200; // tono: más alto = más agudo
+const TICK_VOLUMEN = 0.06; // 0 a 1
+const TICK_DURACION = 0.03; // segundos
+const TICK_GAP = 0.04; // tiempo mínimo entre ticks (segundos)
+
 const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
 // Número al azar "con semilla": siempre da la misma secuencia,
@@ -70,9 +76,43 @@ function Laboratorio() {
   const cortinaRef = useRef(null);
   const enTransicion = useRef(false);
 
+  // ─── Sonido "tick" al pasar el mouse por una pieza (solo dentro y solo en desktop) ───
+  // Se genera con Web Audio (sin archivo de sonido). Los navegadores solo dejan sonar
+  // audio después de un clic: el clic en ENTRAR enciende el audio.
+  const audioRef = useRef(null);
+  const ultimoTick = useRef(0);
+
+  function prepararAudio() {
+    const desktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!desktop) return;
+    if (!audioRef.current) audioRef.current = new AudioContext();
+    audioRef.current.resume();
+  }
+
+  function tick() {
+    const ctx = audioRef.current;
+    if (!ctx || ctx.state !== "running" || !inmersivoRef.current) return;
+    const now = ctx.currentTime;
+    if (now - ultimoTick.current < TICK_GAP) return; // que no se amontonen si pasás rápido
+    ultimoTick.current = now;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = TICK_HZ * (0.92 + Math.random() * 0.16); // leve variación de tono
+    gain.gain.setValueAtTime(TICK_VOLUMEN, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + TICK_DURACION); // se apaga rápido
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + TICK_DURACION);
+  }
+
+  useEffect(() => () => audioRef.current?.close(), []);
+
   // Entrar / salir de pantalla completa con la cortina roja
   async function cambiarModo(entrar) {
     if (enTransicion.current || entrar === inmersivoRef.current) return;
+    if (entrar) prepararAudio(); // tiene que pasar dentro del clic (antes de cualquier await)
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setInmersivo(entrar);
@@ -318,6 +358,7 @@ function Laboratorio() {
               type="button"
               data-pieza
               onClick={() => abrir(item)}
+              onPointerEnter={(e) => e.pointerType === "mouse" && tick()}
               aria-label={item.descripcion}
               className={`lab-pieza group absolute top-0 left-0 cursor-star will-change-transform hover:z-40 ${
                 ["z-0", "z-10", "z-20"][capa]
@@ -343,7 +384,7 @@ function Laboratorio() {
                   />
                 )}
               </span>
-              <span className="pointer-events-none absolute top-full left-0 w-max max-w-60 pt-2 text-left text-sm leading-tight tracking-tighter text-rojo opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span className="pointer-events-none absolute top-full left-0 w-max max-w-60 pt-4 text-left text-sm leading-tight tracking-tighter text-rojo opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 {item.descripcion}
               </span>
             </button>

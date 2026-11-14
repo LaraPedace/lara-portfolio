@@ -79,13 +79,15 @@ function Laboratorio() {
       return;
     }
     enTransicion.current = true;
+    const section = sectionRef.current;
     const cortina = cortinaRef.current;
     const opciones = { duration: WIPE_MS, easing: WIPE_EASING, fill: "forwards" };
 
-    // La cortina solo existe mientras anima. Quieta queda con display: none, porque
-    // Safari de iPhone toma el color de los elementos fijos (aunque estén fuera de
-    // pantalla o con visibility: hidden) para pintar la barra de estado y la de abajo:
-    // se veían rojas.
+    // La cortina NO es position: fixed. Safari de iPhone pinta la barra de estado y la de
+    // abajo con el color de los elementos fijos que tocan los bordes, y se quedaba con el
+    // rojo de la cortina. Por eso es absolute dentro de la sección, y se ubica justo
+    // sobre la parte visible de la pantalla (aunque la sección esté a medio scrollear).
+    cortina.style.top = `${-section.getBoundingClientRect().top}px`;
     cortina.style.display = "block";
     try {
       // 1. Entra desde la izquierda hasta cubrir toda la pantalla
@@ -94,7 +96,17 @@ function Laboratorio() {
         opciones,
       ).finished;
 
-      // 2. Con la pantalla toda roja, se cambia la vista (y se espera a que se dibuje)
+      // 2. Con la pantalla toda roja:
+      //    - al entrar, se alinea la sección con la pantalla (y la cortina con ella, en el
+      //      mismo cuadro, así no se ve el salto). Queda alineada mientras dure la pantalla
+      //      completa, y la cortina vuelve a cubrir bien al salir.
+      //    - se cambia la vista y se espera a que se dibuje
+      if (entrar) {
+        const destino = window.scrollY + section.getBoundingClientRect().top;
+        if (lenis) lenis.scrollTo(destino, { immediate: true, force: true });
+        else window.scrollTo(0, destino);
+        cortina.style.top = "0px";
+      }
       flushSync(() => setInmersivo(entrar));
       await nextFrame();
       await nextFrame();
@@ -287,7 +299,7 @@ function Laboratorio() {
     "text-lg font-medium cursor-pointer uppercase tracking-tighter text-black transition-colors duration-300 hover:text-rojo";
 
   return (
-    <section ref={sectionRef} id="laboratorio" className="relative h-svh bg-white text-black">
+    <section ref={sectionRef} id="laboratorio" className="relative h-svh overflow-x-clip bg-white text-black">
       <div className={inmersivo ? "fixed inset-0 z-60 bg-white" : "absolute inset-0"}>
         {/* Lienzo */}
         <div
@@ -390,21 +402,16 @@ function Laboratorio() {
         </div>
       )}
 
-      {/* Cortina roja de la transición (espera fuera de pantalla, a la izquierda) */}
+      {/* Cortina roja de la transición.
+          - absolute (NO fixed): ver cambiarModo, Safari de iPhone pintaba sus barras de rojo.
+          - h-lvh: alto de la pantalla con las barras de Safari escondidas, para cubrir siempre.
+          - transform: misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría).
+          - display: none mientras no anima. */}
       <div
         ref={cortinaRef}
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-80"
-        // transform: misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría).
-        // display: none mientras no anima (ver cambiarModo: Safari de iPhone).
-        // El rojo va como background-image y NO como background-color (bg-rojo): Safari de
-        // iPhone pinta la barra de estado y la de abajo con el background-color de los
-        // elementos fijos que tocan los bordes, y se quedaba con el rojo de la cortina.
-        style={{
-          transform: "translateX(-100%)",
-          display: "none",
-          backgroundImage: "linear-gradient(var(--color-rojo, #ff0a0a), var(--color-rojo, #ff0a0a))",
-        }}
+        className="pointer-events-none absolute left-0 z-80 h-lvh w-full bg-rojo"
+        style={{ top: 0, transform: "translateX(-100%)", display: "none" }}
       />
     </section>
   );

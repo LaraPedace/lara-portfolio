@@ -1,0 +1,82 @@
+import star from "../assets/img/STAR-ROJA.svg";
+
+// Links de contacto (completar las URLs de Instagram y LinkedIn)
+const LINKS = [
+  { label: "Email", href: "mailto:larapedace@gmail.com" },
+  { label: "Instagram", href: "#" },
+  { label: "Linkedin", href: "#" },
+];
+
+function Footer() {
+  return (
+    <footer
+      id="contacto"
+      className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-1 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-12.25"
+    >
+      <div className="flex flex-col md:flex-row md:justify-between leading-none">
+        {/* Título */}
+        <div className="flex flex-col gap-0 text-display-sm md:text-display leading-none">
+          <h2>Trabajemos</h2>
+          <h2>En conjunto</h2>
+        </div>
+
+        {/* Contacto */}
+        <div className="mt-11 grid grid-cols-[52%_1fr] text-base md:mt-2.25 md:w-98 md:shrink-0 md:grid-cols-[49%_1fr]">
+          <ul className="leading-normal">
+            {LINKS.map((link) => (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  className="transition-colors duration-300 hover:text-rojo"
+                  {...(link.href.startsWith("http") && { target: "_blank", rel: "noreferrer" })}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <p className="text-right leading-normal md:whitespace-nowrap">Buenos Aires, Argentina</p>
+
+          <p className="col-span-2 mt-6 leading-tight">
+            Nuevos proyectos
+            <br />
+            <a
+              href="mailto:larapedace@gmail.com"
+              className="normal-case transition-colors duration-300 hover:text-rojo"
+            >
+              larapedace@gmail.com
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {/* Parte inferior: estrella + créditos */}
+      <div className="mt-auto flex flex-col md:flex-row md:items-end md:justify-between">
+        <img
+          src={star}
+          alt=""
+          aria-hidden="true"
+          className="mb-7.25 h-56.25 w-49.5 self-end transition-transform duration-700 ease-out hover:rotate-180 motion-reduce:transition-none md:mb-0 md:h-25.25 md:w-22.25 md:self-auto"
+        />
+
+        <div className="flex justify-between text-xs tracking-wide leading-normal md:w-98">
+          <p>
+            Website by{" "}
+            <a
+              href="https://www.instagram.com/lolagarciamoreno/"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-colors duration-300 hover:text-rojo"
+            >
+              @lolagarciamoreno
+            </a>
+          </p>
+          <p className="tracking-wide">2026©</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default Footer;

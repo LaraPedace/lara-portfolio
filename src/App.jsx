@@ -1,0 +1,45 @@
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { ReactLenis, useLenis } from 'lenis/react'
+import 'lenis/dist/lenis.css'
+import './App.css'
+import Header from './components/Header.jsx'
+import Footer from './components/Footer.jsx'
+import Home from './pages/Home.jsx'
+import Info from './pages/Info.jsx'
+
+// Si la persona pidió menos animaciones en su sistema, el scroll queda normal
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// Al cambiar de página, vuelve arriba de todo (salvo que el link apunte a un #ancla)
+function ScrollToTop() {
+  const { pathname, hash } = useLocation()
+  const lenis = useLenis()
+
+  useEffect(() => {
+    if (hash) return
+    // Con Lenis hay que scrollear a través de él; si no, Lenis "pelea" con el salto
+    if (lenis) lenis.scrollTo(0, { immediate: true })
+    else window.scrollTo(0, 0)
+  }, [pathname, hash, lenis])
+
+  return null
+}
+
+const App = () => {
+  return (
+    <ReactLenis root options={{ smoothWheel: !reduceMotion }}>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/info" element={<Info />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </ReactLenis>
+  )
+}
+
+export default App

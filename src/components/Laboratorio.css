@@ -1,0 +1,5 @@
+/* Mientras se arrastra el lienzo, las miniaturas no reaccionan
+   (ni hover ni clic: así al soltar no se abre ninguna sin querer) */
+.lab-arrastrando .lab-pieza {
+  pointer-events: none;
+}

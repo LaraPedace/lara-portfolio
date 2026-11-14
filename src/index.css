@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+
+@theme {
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-grotesk: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* Colores */
+  --color-rojo: #ff0a0a; /* hover de todo lo clickeable */
+
+  /* Animaciones */
+  --animate-fade-in: fade-in 1.2s ease-out 0.3s both; /* aparición sutil */
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Tamaños de texto */
+  --text-scramble: 0.6em; /* caracteres random de ScrambleText: 60% del texto que reemplazan */
+  --text-2xs: 0.625rem; /* 10px */
+  --text-display-sm: 3.108rem; /* 49.7px: título del footer en móvil */
+  --text-display-sm--line-height: 1.04;
+  --text-display: clamp(2.5rem, 4.88vw, 5.271rem); /* 40px → 84.3px */
+  --text-display--line-height: 1.04;
+  --text-section-sm: 2rem; /* 32px: títulos de sección en móvil */
+  --text-section-sm--line-height: 1.5;
+  --text-section: 2.8125rem; /* 45px: títulos de sección en desktop */
+  --text-section--line-height: 1.5;
+  --text-card-title: 2.1875rem; /* 35px: nombre del proyecto */
+  --text-card-title--line-height: 1.05;
+  --text-card-meta: 1.375rem; /* 22px: categoría del proyecto */
+  --text-card-meta--line-height: 1.05;
+
+  /* Página Info */
+  --text-lead-sm: 1.875rem; /* 30px: presentación en móvil */
+  --text-lead-sm--line-height: 1.3;
+  --text-lead: 2.5rem; /* 40px: presentación en desktop */
+  --text-lead--line-height: 1.3;
+  --text-body-lg-sm: 1.375rem; /* 22px: texto "sobre mí" en móvil */
+  --text-body-lg-sm--line-height: 1.3;
+  --text-body-lg: 1.75rem; /* 28px: texto "sobre mí" en desktop */
+  --text-body-lg--line-height: 1.3;
+  --text-label: 1.0625rem; /* 17px: etiquetas "Sobre mí" y "Softwares" en desktop */
+  --text-label--line-height: 1.5;
+
+  /* Proporciones */
+  --aspect-project-row: 659 / 539; /* imagen de proyecto en la lista en filas */
+  --aspect-card: 416 / 435; /* imagen de proyecto en móvil */
+  --aspect-portrait: 255 / 268; /* foto de la página Info */
+
+  /* Espaciado entre letras: -4% del tamaño de la letra (como en Figma) */
+  --tracking-compact: -0.04em;
+  /* -2%: textos de la página Info */
+  --tracking-soft: -0.02em;
+}
+
+/* Cursor con la estrella roja (el punto activo es el centro) */
+@utility cursor-star {
+  cursor: url("./assets/img/cursor-star.svg") 14 16, pointer;
+}
+
+@layer base {
+  body {
+    letter-spacing: var(--tracking-compact);
+  }
+}

@@ -1,0 +1,22 @@
+/* Desktop (vista lista): la imagen aparece con un fundido mientras entra en pantalla.
+   Usa animaciones atadas al scroll (sin JavaScript). Solo cambia la opacidad,
+   que es muy liviana para el navegador (escalar imágenes grandes trababa el scroll).
+   En navegadores que no lo soportan, la imagen se ve directamente. */
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .proyecto-aparece {
+      animation: proyecto-aparece linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes proyecto-aparece {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

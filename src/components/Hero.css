@@ -60,6 +60,17 @@
   }
 }
 
+/* Móvil: el logo arranca estirado en vertical y vuelve a su tamaño al scrollear.
+   La clase .hero-estirado la agrega Hero.jsx solo en móvil (hasta 767px) y sin
+   "reducir movimiento"; en desktop esto no se aplica. El logo se ubica arriba (debajo
+   del header). Mientras está estirado se dibuja en un <canvas> (ver Hero.jsx): cada fila
+   del dibujo se repite en varias filas de caracteres de tamaño normal, así los
+   caracteres NO se deforman. */
+.hero.hero-estirado {
+  align-items: flex-start;
+  padding-top: var(--hero-top, 4rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-char,
   .hero-char.away {

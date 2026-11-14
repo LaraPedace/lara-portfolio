@@ -35,7 +35,7 @@ function Proyectos() {
 
   return (
     <section id="proyectos" className="bg-white px-4 pt-40 pb-40 text-black md:pt-12 xl:px-8">
-      <h2 className="text-3xl font-medium tracking-tighter">Proyectos Seleccionados</h2>
+      <h2 className="text-3xl font-medium tracking-tighter xl:text-5xl">Proyectos Seleccionados</h2>
 
       {/* Selector de vista: solo en desktop */}
       <div role="group" aria-label="Forma de ver los proyectos" className="mt-4 hidden gap-4.5 lg:flex">
@@ -92,10 +92,10 @@ function Proyectos() {
               </div>
 
               <div className={lista ? "lg:col-span-7 lg:row-start-1 lg:mt-5.25" : ""}>
-                <h3 className={`mt-2 text-4xl font-medium tracking-tighter md:mt-3 ${lista ? "lg:mt-0" : ""}`}>
+                <h3 className={`mt-2 text-2xl xl:text-4xl font-medium tracking-tighter md:mt-3 ${lista ? "lg:mt-0" : ""}`}>
                   {proyecto.titulo}
                 </h3>
-                <p className="tracking-tighter md:text-lg">{proyecto.categoria}</p>
+                <p className="tracking-tighter  md:text-lg">{proyecto.categoria}</p>
               </div>
 
               {lista && proyecto.descripcion && (

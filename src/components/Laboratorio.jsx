@@ -82,10 +82,11 @@ function Laboratorio() {
     const cortina = cortinaRef.current;
     const opciones = { duration: WIPE_MS, easing: WIPE_EASING, fill: "forwards" };
 
-    // La cortina solo es visible mientras anima. Quieta queda con visibility: hidden,
-    // porque Safari de iPhone toma el color de los elementos fijos (aunque estén fuera
-    // de pantalla) para pintar la barra de estado y la barra de abajo: se veían rojas.
-    cortina.style.visibility = "visible";
+    // La cortina solo existe mientras anima. Quieta queda con display: none, porque
+    // Safari de iPhone toma el color de los elementos fijos (aunque estén fuera de
+    // pantalla o con visibility: hidden) para pintar la barra de estado y la de abajo:
+    // se veían rojas.
+    cortina.style.display = "block";
     try {
       // 1. Entra desde la izquierda hasta cubrir toda la pantalla
       await cortina.animate(
@@ -105,7 +106,7 @@ function Laboratorio() {
       ).finished;
     } finally {
       // Vuelve a esperar a la izquierda (fuera de pantalla) y oculta
-      cortina.style.visibility = "hidden";
+      cortina.style.display = "none";
       cortina.getAnimations().forEach((a) => a.cancel());
       enTransicion.current = false;
     }
@@ -335,7 +336,7 @@ function Laboratorio() {
 
         {/* Título fijo a la izquierda + botón entrar / salir */}
         <div className="pointer-events-none absolute top-1/2 left-4 z-50 -translate-y-1/2 xl:left-8">
-          <h2 className="max-w-[6em] text-5xl leading-none font-medium tracking-tighter xl:text-4xl">
+          <h2 className="max-w-[6em] text-5xl leading-none font-medium tracking-tighter xl:text-6xl">
             El Laboratorio de Lara
           </h2>
           <button
@@ -361,9 +362,11 @@ function Laboratorio() {
           <button
             type="button"
             onClick={() => setAbierta(null)}
-            className={`absolute top-5 left-4 xl:left-8 ${boton}`}
+            // Arriba a la derecha (más cómodo para el pulgar). El padding agranda la zona
+            // tocable y el margen negativo lo compensa para que el texto quede alineado.
+            className={`absolute top-5 right-4 -m-3 p-3 xl:right-8 ${boton}`}
           >
-            <span aria-hidden="true">← </span>Cerrar
+            Cerrar <span aria-hidden="true">×</span>
           </button>
           {abierta.tipo === "video" ? (
             <video
@@ -393,8 +396,8 @@ function Laboratorio() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-80 bg-rojo"
         // transform: misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría).
-        // visibility: hidden mientras no anima (ver cambiarModo: Safari de iPhone).
-        style={{ transform: "translateX(-100%)", visibility: "hidden" }}
+        // display: none mientras no anima (ver cambiarModo: Safari de iPhone).
+        style={{ transform: "translateX(-100%)", display: "none" }}
       />
     </section>
   );

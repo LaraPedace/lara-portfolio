@@ -18,7 +18,8 @@ function random(list) {
 //   empieza a escribirse cuando termina el primero).
 // Cada carácter random se dibuja encima de la letra real (invisible), así el texto
 // ocupa siempre el mismo lugar y las líneas no saltan.
-function ScrambleText({ text, offset = 0, className = "" }) {
+// - animar: si es false, el texto aparece directo, sin efecto.
+function ScrambleText({ text, offset = 0, className = "", animar = true }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ function ScrambleText({ text, offset = 0, className = "" }) {
       letter.fake.textContent = "";
     }
 
-    if (reduce) {
+    if (reduce || !animar) {
       letters.forEach(reveal);
       return;
     }
@@ -73,7 +74,7 @@ function ScrambleText({ text, offset = 0, className = "" }) {
     frame = requestAnimationFrame(tick);
 
     return () => cancelAnimationFrame(frame);
-  }, [text, offset]);
+  }, [text, offset, animar]);
 
   const words = text.split(" ");
 

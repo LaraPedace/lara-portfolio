@@ -274,13 +274,17 @@ function Laboratorio() {
     };
   }, []);
 
-  // ─── Pantalla completa: bloquear el scroll de la página, Esc para salir ───
+  // ─── Pantalla completa: bloquear el scroll de la página ───
   useEffect(() => {
     inmersivoRef.current = inmersivo;
     const bloquear = inmersivo || abierta;
     if (bloquear) lenis?.stop();
     else lenis?.start();
+  }, [inmersivo, abierta, lenis]);
 
+  // ─── Esc: cierra la pieza abierta, o sale de pantalla completa ───
+  // (sin lista de dependencias: se vuelve a enganchar en cada render con los valores al día)
+  useEffect(() => {
     function onKey(e) {
       if (e.key !== "Escape") return;
       if (abierta) setAbierta(null);
@@ -288,7 +292,7 @@ function Laboratorio() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [inmersivo, abierta, lenis]);
+  });
 
   function abrir(item) {
     if (item.href) window.location.href = item.href;

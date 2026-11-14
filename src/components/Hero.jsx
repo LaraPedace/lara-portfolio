@@ -1,5 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import ScrambleText from "./ScrambleText.jsx";
 import "./Hero.css";
+
+// "Scroll ↓" hace el efecto de caracteres random solo la primera vez que carga la página.
+// Esta variable vive mientras la pestaña esté abierta: si vas a Info y volvés, ya no
+// se repite; si recargás la página, sí.
+let scrollYaAnimado = false;
 
 // Dibujo de las letras: cada # es un carácter, cada . es un espacio vacío
 const MASK = [
@@ -47,6 +53,11 @@ function shuffle(el) {
 function Hero() {
   const laraRef = useRef(null);
   const dustRef = useRef(null);
+  // Se decide una sola vez al montar si "Scroll ↓" se anima (y se marca como ya animado)
+  const [animarScroll] = useState(() => !scrollYaAnimado);
+  useEffect(() => {
+    scrollYaAnimado = true;
+  }, []);
 
   useEffect(() => {
     const root = laraRef.current;
@@ -219,7 +230,9 @@ function Hero() {
       <div className="hero-stage font-grotesk">
         <h1 ref={laraRef} className="hero-lara" aria-label="Lara"></h1>
       </div>
-      <p className="absolute bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">Scroll ↓</p>
+      <p className="absolute bottom-19 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
+        <ScrambleText text="Scroll ↓" animar={animarScroll} />
+      </p>
     </section>
   );
 }

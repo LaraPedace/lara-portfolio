@@ -65,6 +65,12 @@
 }
 
 @layer base {
+  /* Fondo blanco explícito: Safari de iPhone lo usa para pintar la barra de estado y la de abajo */
+  html,
+  body {
+    background-color: #ffffff;
+  }
+
   body {
     letter-spacing: var(--tracking-compact);
   }

@@ -82,26 +82,33 @@ function Laboratorio() {
     const cortina = cortinaRef.current;
     const opciones = { duration: WIPE_MS, easing: WIPE_EASING, fill: "forwards" };
 
-    // 1. Entra desde la izquierda hasta cubrir toda la pantalla
-    await cortina.animate(
-      [{ transform: "translateX(-100%)" }, { transform: "translateX(0)" }],
-      opciones,
-    ).finished;
+    // La cortina solo es visible mientras anima. Quieta queda con visibility: hidden,
+    // porque Safari de iPhone toma el color de los elementos fijos (aunque estén fuera
+    // de pantalla) para pintar la barra de estado y la barra de abajo: se veían rojas.
+    cortina.style.visibility = "visible";
+    try {
+      // 1. Entra desde la izquierda hasta cubrir toda la pantalla
+      await cortina.animate(
+        [{ transform: "translateX(-100%)" }, { transform: "translateX(0)" }],
+        opciones,
+      ).finished;
 
-    // 2. Con la pantalla toda roja, se cambia la vista (y se espera a que se dibuje)
-    flushSync(() => setInmersivo(entrar));
-    await nextFrame();
-    await nextFrame();
+      // 2. Con la pantalla toda roja, se cambia la vista (y se espera a que se dibuje)
+      flushSync(() => setInmersivo(entrar));
+      await nextFrame();
+      await nextFrame();
 
-    // 3. Sigue de largo y sale por la derecha
-    await cortina.animate(
-      [{ transform: "translateX(0)" }, { transform: "translateX(100%)" }],
-      opciones,
-    ).finished;
-
-    // Vuelve a esperar a la izquierda (fuera de pantalla) para la próxima vez
-    cortina.getAnimations().forEach((a) => a.cancel());
-    enTransicion.current = false;
+      // 3. Sigue de largo y sale por la derecha
+      await cortina.animate(
+        [{ transform: "translateX(0)" }, { transform: "translateX(100%)" }],
+        opciones,
+      ).finished;
+    } finally {
+      // Vuelve a esperar a la izquierda (fuera de pantalla) y oculta
+      cortina.style.visibility = "hidden";
+      cortina.getAnimations().forEach((a) => a.cancel());
+      enTransicion.current = false;
+    }
   }
 
   // ─── Motor del lienzo ────────────────────────────────────────────────────
@@ -385,7 +392,9 @@ function Laboratorio() {
         ref={cortinaRef}
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-80 bg-rojo"
-        style={{ transform: "translateX(-100%)" }} // misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría)
+        // transform: misma propiedad que anima la cortina (no usar -translate-x-full: se sumaría).
+        // visibility: hidden mientras no anima (ver cambiarModo: Safari de iPhone).
+        style={{ transform: "translateX(-100%)", visibility: "hidden" }}
       />
     </section>
   );

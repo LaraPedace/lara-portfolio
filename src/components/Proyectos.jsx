@@ -35,7 +35,7 @@ function Proyectos() {
 
   return (
     <section id="proyectos" className="bg-white px-4 pt-40 pb-40 text-black md:pt-12 xl:px-8">
-      <h2 className="text-6xl font-medium tracking-tighter">Proyectos Seleccionados</h2>
+      <h2 className="text-3xl font-medium tracking-tighter">Proyectos Seleccionados</h2>
 
       {/* Selector de vista: solo en desktop */}
       <div role="group" aria-label="Forma de ver los proyectos" className="mt-4 hidden gap-4.5 lg:flex">

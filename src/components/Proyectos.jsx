@@ -35,7 +35,7 @@ function Proyectos() {
   const lista = vista === "lista";
 
   return (
-    <section id="proyectos" className="bg-white px-4 pt-12 pb-40 text-black md:pt-12 xl:px-8">
+    <section id="proyectos" className="bg-white px-4 pb-12 py-12 xl:pb-40 text-black md:pt-12 xl:px-8">
       <h2 className="text-3xl font-medium tracking-tighter xl:text-5xl">Proyectos Seleccionados</h2>
 
       {/* Selector de vista: solo en desktop */}

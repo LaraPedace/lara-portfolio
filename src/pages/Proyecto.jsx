@@ -120,7 +120,7 @@ function Notas({ notas, className = "" }) {
 function Dato({ label, children }) {
   return (
     <div className="flex flex-col gap-3 lg:gap-franja-sm">
-      <dt className="text-eyebrow uppercase text-white/40 lg:text-franja-label">{label}</dt>
+      <dt className="text-sm tracking-normal uppercase text-white/40 lg:text-franja-label">{label}</dt>
       <dd className="text-project-meta lg:text-franja-meta">{children}</dd>
     </div>
   );
@@ -199,7 +199,7 @@ function Proyecto() {
           </div>
 
           <div className="flex flex-col gap-4 lg:gap-franja-sm">
-            <h2 className="text-eyebrow uppercase text-white/40 lg:text-franja-label">Sobre el proyecto</h2>
+            <h2 className="text-sm uppercase text-white/40 lg:text-franja-label">Sobre el proyecto</h2>
             <p className="text-xl  max-lg:leading-snug tracking-tighter lg:text-franja-body">
               {proyecto.sobreElProyecto}
             </p>

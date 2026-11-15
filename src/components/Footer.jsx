@@ -85,7 +85,7 @@ function Footer() {
           className="mb-7.25 h-56.25 w-49.5 self-end transition-transform duration-700 ease-out hover:rotate-180 motion-reduce:transition-none md:mb-0 md:h-25.25 md:w-22.25 md:self-auto"
         />
 
-        <div className="flex justify-between text-xs tracking-tight leading-normal md:w-98">
+        <div className="flex justify-between  text-2xs xl:text-xs tracking-tight leading-normal md:w-98">
           <p>
             Website by{" "}
             <a

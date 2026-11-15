@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import foto from "../assets/img/foto_lari.webp";
+import cv from "../assets/CV-LaraPedace.pdf";
 import ScrambleText from "../components/ScrambleText.jsx";
 import PhotoScramble from "../components/PhotoScramble.jsx";
 import "./Info.css";
@@ -89,6 +90,16 @@ function Info() {
           ))}
         </ul>
       ))}
+
+      {/* CV: debajo de Softwares, mismo tamaño. Al hacer clic se descarga el PDF */}
+      <a
+        href={cv}
+        download="CV-LaraPedace.pdf"
+        data-aparece
+        className="aparece order-7 col-span-2 mt-12 w-fit text-sm leading-tight font-bold uppercase transition-colors duration-300 hover:text-rojo xl:order-0 xl:col-span-2 xl:col-start-6 xl:mt-14 xl:text-label"
+      >
+        Descargar CV <span aria-hidden="true">↓</span>
+      </a>
     </main>
   );
 }

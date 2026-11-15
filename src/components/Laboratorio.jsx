@@ -54,12 +54,13 @@ function armarPiezas() {
   }
   // Cada pieza va a una celda, corrida al azar (así no se nota la grilla), con un tamaño al azar.
   // u, v = centro de la pieza dentro del lienzo, de 0 a 1.
-  return piezas.map((p, i) => ({
-    ...p,
-    u: ((i % COLS) + 0.5 + (rand() - 0.5) * 0.7) / COLS,
-    v: (Math.floor(i / COLS) + 0.5 + (rand() - 0.5) * 0.7) / ROWS,
-    capa: Math.floor(rand() * 3), // 0 = chica, 1 = mediana, 2 = grande
-  }));
+  return piezas.map((p, i) => {
+    const u = ((i % COLS) + 0.5 + (rand() - 0.5) * 0.7) / COLS;
+    const v = (Math.floor(i / COLS) + 0.5 + (rand() - 0.5) * 0.7) / ROWS;
+    const capa = Math.floor(rand() * 3); // 0 = chica, 1 = mediana, 2 = grande
+    // Los videos aparecen una sola vez: nunca van chicos (atrás de todo), mínimo medianos
+    return { ...p, u, v, capa: p.item.tipo === "video" ? Math.max(1, capa) : capa };
+  });
 }
 
 const PIEZAS = armarPiezas();

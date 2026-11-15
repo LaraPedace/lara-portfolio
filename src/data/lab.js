@@ -27,6 +27,8 @@ import pieza18 from "../assets/lab/18.webp";
 import pieza19 from "../assets/lab/19.webp";
 import pieza20 from "../assets/lab/20.webp";
 import pieza21 from "../assets/lab/21.webp";
+import pieza22 from "../assets/lab/22.mp4";
+import pieza23 from "../assets/lab/23.mp4";
 
 export const lab = [
   {
@@ -196,5 +198,21 @@ export const lab = [
     ancho: 2000,
     alto: 1809,
     descripcion: "Foto x ByChula",
+  },
+  {
+    id: 22,
+    tipo: "video",
+    src: pieza22,
+    ancho: 1280,
+    alto: 720,
+    descripcion: "Alien en 3D",
+  },
+  {
+    id: 23,
+    tipo: "video",
+    src: pieza23,
+    ancho: 1280,
+    alto: 1280,
+    descripcion: "Alien ASCII",
   },
 ];

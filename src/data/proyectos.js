@@ -3,6 +3,7 @@ import microdesastrePreview from "../assets/img/microdesastre-preview.webp";
 import casamorrilloPreview from "../assets/img/casamorrillo-preview.webp";
 import cumbiadelolvidoPreview from "../assets/img/cumbiadelolvido-preview.webp";
 import desaPreview from "../assets/img/desa-preview.webp";
+import galoPreview from "../assets/img/galo-preview.webp";
 
 // Orden = orden en que aparecen en la home.
 // categoria = subtítulo de la tarjeta. preview = imagen de la tarjeta.
@@ -258,6 +259,27 @@ export const proyectos = [
           "/proyectos/desa/presentacion-2.jpg",
         ],
       },
+    ],
+  },
+
+  {
+    id: "galo",
+    titulo: "Galo",
+    categoria: "Branding / Identidad visual",
+    preview: galoPreview,
+    descripcion:
+      "Branding para una marca de café de especialidad en Buenos Aires: una misma identidad, dos líneas.",
+    sobreElProyecto:
+      "Galo es café primero: una cafetería de especialidad que suma gastronomía, bienestar y lifestyle. El branding ordena la marca en dos líneas que conviven bajo un mismo nombre. Galo es su cara cotidiana, cálida y cercana, pensada para la experiencia en el local. Galo Coffee Roasters es su línea de autor, dedicada al tostado y a los cafés de origen, con un lenguaje más sobrio y premium.",
+    anio: "2026",
+    tipo: "Profesional",
+    disciplinas: ["Branding", "Identidad visual", "Packaging", "Piezas visuales"],
+    colaboracion: "",
+    imagenes: [],
+    secciones: [
+      { titulo: "Contexto", texto: "", imagenes: [] },
+      { titulo: "Línea 01 - Galo", texto: "", imagenes: [] },
+      { titulo: "Línea 02 - Galo Coffee Roasters", texto: "", imagenes: [] },
     ],
   },
 ];

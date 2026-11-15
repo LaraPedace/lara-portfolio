@@ -396,15 +396,24 @@ export const proyectos = [
     colaboracion: "",
     imagenes: [m("galo/galo_1.webp")],
     secciones: [
-      { titulo: "Contexto", texto: "", imagenes: [] },
       {
-        titulo: "Línea 01 - Galo",
-        texto: "",
+        titulo: "Una marca, dos líneas",
+        texto:
+          "Galo y Galo Coffee Roasters forman parte de una misma identidad. Una resuelve el día a día de la cafetería; la otra eleva el producto y lo presenta como una propuesta de autor.",
+        imagenes: [],
+      },
+      {
+        titulo: "Línea 01 — Galo",
+        tituloIndice: "Línea 01 - Galo",
+        texto:
+          "La imagen institucional de la marca. Una paleta de tonos tierra y azul grisáceo, el bulldog francés como símbolo y la firma “Sabores que dejan huella”. Se aplica en la cafetería, el menú, el take away y las redes, con un tono cercano y cotidiano.",
         imagenes: [m("galo/galo_2.webp"), m("galo/galo_3.webp"), m("galo/galo_4.webp")],
       },
       {
-        titulo: "Línea 02 - Galo Coffee Roasters",
-        texto: "",
+        titulo: "Línea 02 — Galo Coffee Roasters",
+        tituloIndice: "Línea 02 - Galo Coffee Roasters",
+        texto:
+          "La línea premium y de autor. Una estética más sobria; el grano de café y el sello circular. Pensada para el tostado, los cafés de origen poniendo en primer plano el producto: origen, proceso y puntaje.",
         imagenes: [
           m("galo/galo_5.webp"),
           m("galo/galo_6.webp"),

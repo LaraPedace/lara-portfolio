@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import star from "../assets/img/STAR-ROJA.svg";
 import ScrambleText from "./ScrambleText.jsx";
 
-// Links de contacto (completar las URLs de Instagram y LinkedIn)
+// Links de contacto
 const LINKS = [
   { label: "Email", href: "mailto:larapedace@gmail.com" },
-  { label: "Instagram", href: "#" },
-  { label: "Linkedin", href: "#" },
+  { label: "Instagram", href: "https://www.instagram.com/l____032003/" },
+  { label: "Linkedin", href: "https://www.linkedin.com/in/lara-pedace-9742b6219/" },
 ];
 
 function Footer() {

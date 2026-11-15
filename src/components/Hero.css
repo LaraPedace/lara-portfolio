@@ -147,3 +147,17 @@
     transition: none;
   }
 }
+/* Página 404: el mismo logo de caracteres, en rojo y lo más grande posible: todo el ancho,
+   siempre que entre a lo alto junto con el header y el texto de abajo (≈ 18rem).
+   El 404 es ~2.5 veces más ancho que alto. */
+.no-encontrada {
+  --logo-color: var(--color-rojo);
+  --logo-opacidad: 1;
+  --ancho: min(100vw - var(--margen), (100svh - 18rem) * 2.5);
+  color: #000; /* el texto, en negro; el logo y los caracteres sueltos, en rojo */
+  cursor: auto;
+}
+
+.no-encontrada .hero-dust {
+  color: var(--logo-color);
+}

@@ -8,6 +8,7 @@ import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import Info from './pages/Info.jsx'
 import Proyecto from './pages/Proyecto.jsx'
+import NoEncontrada from './pages/NoEncontrada.jsx'
 import { PageTransitionProvider } from './components/PageTransition.jsx'
 import { scrollAlAncla } from './components/scrollAlAncla.js'
 import Preloader from './components/Preloader.jsx'
@@ -46,6 +47,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/info" element={<Info />} />
             <Route path="/proyectos/:id" element={<Proyecto />} />
+            <Route path="*" element={<NoEncontrada />} />
           </Routes>
           <Footer />
           {/* Va al final: así, cuando arranca, la página ya está armada y puede seguir su carga */}

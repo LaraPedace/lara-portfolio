@@ -2,11 +2,15 @@ import { useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { TransitionLink } from "./PageTransition.jsx";
 import star from "../assets/img/STAR.svg";
+import { proyectos } from "../data/proyectos.js";
 
 function Header() {
   const starRef = useRef(null);
   // En las páginas de proyecto el fondo es negro: el header pasa a blanco sobre negro
-  const oscuro = useLocation().pathname.startsWith("/proyectos/");
+  // (solo si el proyecto existe: si no, se ve la página 404, que es blanca)
+  const { pathname } = useLocation();
+  const [, seccion, id] = pathname.split("/");
+  const oscuro = seccion === "proyectos" && proyectos.some((p) => p.id === id);
   const texto = oscuro ? "text-white" : "text-black";
 
   // La estrella gira con el scroll. Se cambia el estilo directo (sin estado de React)

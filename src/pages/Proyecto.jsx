@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useLenis } from "lenis/react";
 import { proyectos } from "../data/proyectos.js";
 import { TransitionLink } from "../components/PageTransition.jsx";
 import { scrollAlAncla } from "../components/scrollAlAncla.js";
 import Botonera from "../components/Botonera.jsx";
+import NoEncontrada from "./NoEncontrada.jsx";
 
 const esVideo = (src) => /\.(mp4|webm)$/i.test(src);
 const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -167,7 +168,8 @@ function Proyecto() {
     return () => observer.disconnect();
   }, [proyecto]);
 
-  if (!proyecto) return <Navigate to="/" replace />;
+  // Proyecto que no existe (ej. /proyectos/algo-mal-escrito): página 404
+  if (!proyecto) return <NoEncontrada />;
 
   const siguiente = proyectos[(indice + 1) % proyectos.length];
 

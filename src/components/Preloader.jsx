@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useLenis } from "lenis/react";
 import star from "../assets/img/STAR.svg";
+import { preloaderActivo, marcarVisto, avisarQueTermino } from "./preloaderEstado.js";
 
 // Preloader: fondo blanco, una línea fina que crece desde abajo con la estrella en la
 // punta y el porcentaje abajo a la izquierda. Al llegar a 100% la estrella queda justo
@@ -8,21 +9,11 @@ import star from "../assets/img/STAR.svg";
 // estrella del preloader "se convierte" en la del header.
 // Solo la primera vez por sesión, y nunca con "reducir movimiento".
 
-const VISTO = "preloader-visto"; // clave en sessionStorage
 const MIN_MS = 1500; // duración mínima, para que la animación se llegue a ver
 const MAX_MS = 10000; // si algo no termina de cargar, a los 10s se completa igual
 const SUAVIDAD = 0.06; // cuánto se acerca el progreso visible al real en cada cuadro
 const PASO_MIN = 0.006; // avance mínimo por cuadro cuando falta poco (≈ 0,6%)
 const FADE_MS = 450; // fundido final
-
-function debeMostrarse() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  try {
-    return !sessionStorage.getItem(VISTO);
-  } catch {
-    return true;
-  }
-}
 
 // Seguimiento de la carga real: fuentes, imágenes que se cargan de entrada y videos
 // que se precargan (las imágenes "lazy" y los videos con preload="none" no se cargan
@@ -60,7 +51,7 @@ function seguirCarga() {
 }
 
 function Preloader() {
-  const [visible, setVisible] = useState(debeMostrarse);
+  const [visible, setVisible] = useState(preloaderActivo);
   const lenis = useLenis();
   const fondoRef = useRef(null);
   const lineaRef = useRef(null);
@@ -84,11 +75,7 @@ function Preloader() {
   // Animación (layout effect: se ubica todo antes de que se dibuje el primer cuadro)
   useLayoutEffect(() => {
     if (!visible) return;
-    try {
-      sessionStorage.setItem(VISTO, "1");
-    } catch {
-      // sin sessionStorage: se vuelve a mostrar en la próxima carga, no pasa nada
-    }
+    marcarVisto();
 
     const linea = lineaRef.current;
     const estrella = estrellaRef.current;
@@ -151,6 +138,7 @@ function Preloader() {
 
     // 100%: se desvanece todo menos la estrella, que ya está sobre la del header
     function terminar() {
+      avisarQueTermino(); // el Hero arranca su entrada mientras esto se desvanece
       for (const el of [fondoRef.current, restoRef.current]) {
         el.style.transition = `opacity ${FADE_MS}ms ease-out`;
         el.style.opacity = "0";

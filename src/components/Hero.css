@@ -67,15 +67,19 @@
 }
 
 /* Móvil: la estrella (más alta que ancha) también tiene que entrar a lo alto, junto con
-   el header, el texto de arriba y de abajo y "Scroll ↓" (≈ 26rem en total). La estrella mide 0.87 de ancho por 1 de alto. */
+   el header, el texto de arriba y de abajo y "Scroll ↓" (≈ 25rem en total). La estrella mide 0.87 de ancho por 1 de alto. */
 @media (width < 48rem) {
   .hero {
-    --ancho: min(100vw - var(--margen), (100svh - 26rem) * 0.87);
+    /* Llega de borde a borde de la pantalla (sin el margen de los costados) */
+    --ancho: min(100vw, (100svh - 25rem) * 0.87);
   }
 
   /* El texto va de margen a margen aunque la estrella quede más angosta */
   .hero-contenido {
     width: 100%;
+    /* La columna mide lo que el contenido (sin el margen); la estrella, más ancha,
+       sobresale centrada hasta los bordes sin estirar la columna ni correr el texto */
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .hero-contenido .hero-stage {

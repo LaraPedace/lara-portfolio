@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import star from "../assets/img/STAR-ROJA.svg";
 import ScrambleText from "./ScrambleText.jsx";
 
@@ -9,8 +10,26 @@ const LINKS = [
 ];
 
 function Footer() {
+  const footerRef = useRef(null);
+
+  // Safari de iPhone: mientras el footer (negro) se ve, el fondo del html pasa a negro,
+  // así la barra de abajo y el rebote del scroll no muestran una franja blanca.
+  // Al salir de pantalla vuelve a blanco. El footer está en todas las páginas.
+  useEffect(() => {
+    const html = document.documentElement;
+    const observer = new IntersectionObserver(([entry]) => {
+      html.style.backgroundColor = entry.isIntersecting ? "#000" : "#fff";
+    });
+    observer.observe(footerRef.current);
+    return () => {
+      observer.disconnect();
+      html.style.backgroundColor = "";
+    };
+  }, []);
+
   return (
     <footer
+      ref={footerRef}
       id="contacto"
       className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-1 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-4"
     >

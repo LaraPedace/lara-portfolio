@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ScrambleText from "./ScrambleText.jsx";
 import star from "../assets/img/STAR.svg";
+import { esperarPreloader, preloaderActivo } from "./preloaderEstado.js";
 import "./Hero.css";
 
 // "Scroll ↓" hace el efecto de caracteres random solo la primera vez que carga la página.
@@ -137,38 +138,50 @@ function Hero() {
 
   // Se decide una sola vez al montar si "Scroll ↓" se anima (y se marca como ya animado)
   const [animarScroll] = useState(() => !scrollYaAnimado);
+  // Si hay preloader, "Scroll ↓" y la entrada del texto esperan a que termine
+  const [preloaderListo, setPreloaderListo] = useState(!preloaderActivo);
+  useEffect(() => {
+    let activo = true;
+    esperarPreloader().then(() => activo && setPreloaderListo(true));
+    return () => {
+      activo = false;
+    };
+  }, []);
   useEffect(() => {
     scrollYaAnimado = true;
   }, []);
 
-  // Entrada del texto (primera carga; en desktop además se mueve al centro). Es un layout effect para esconder el
-  // texto antes de que se dibuje la página, así no aparece un instante en el centro.
+  // Entrada del texto (primera carga; en desktop además se mueve al centro). Es un layout
+  // effect para esconder el texto antes de que se dibuje la página, así no aparece un
+  // instante en el centro.
   useLayoutEffect(() => {
     if (!animarScroll) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const textos = [saludoRef.current, lugarRef.current];
-
-    // Móvil: solo un fundido suave (primero el saludo, apenas después "Buenos Aires")
-    if (!window.matchMedia(INTRO_MQ).matches) {
-      const fundidos = textos.map((el, i) =>
-        el.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: MOVIL_FADE,
-          delay: INTRO_DEMORA + i * MOVIL_ESCALON,
-          easing: "ease-out",
-          fill: "backwards",
-        }),
-      );
-      return () => fundidos.forEach((a) => a.cancel());
-    }
-
+    // Escondido hasta que arranque (si hay preloader, recién cuando llega a 100%)
     textos.forEach((el) => (el.style.opacity = "0"));
     let animaciones = [];
     let cancelado = false;
 
     // Se mide cuando la tipografía ya cargó (el ancho del texto cambia con la letra)
-    document.fonts.ready.then(() => {
+    Promise.all([esperarPreloader(), document.fonts.ready]).then(() => {
       if (cancelado) return;
+
+      // Móvil: solo un fundido suave (primero el saludo, apenas después "Buenos Aires")
+      if (!window.matchMedia(INTRO_MQ).matches) {
+        animaciones = textos.map((el, i) =>
+          el.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: MOVIL_FADE,
+            delay: INTRO_DEMORA + i * MOVIL_ESCALON,
+            easing: "ease-out",
+            fill: "backwards",
+          }),
+        );
+        textos.forEach((el) => (el.style.opacity = ""));
+        return;
+      }
+
       const logo = stageRef.current.getBoundingClientRect();
       const saludo = saludoRef.current.getBoundingClientRect();
       const lugar = lugarRef.current.getBoundingClientRect();
@@ -394,7 +407,8 @@ function Hero() {
         </p>
       </div>
       <p className="absolute bottom-12 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
-        <ScrambleText text="Scroll ↓" animar={animarScroll} />
+        {/* Con preloader, aparece (y se anima) recién cuando el preloader termina */}
+        {preloaderListo && <ScrambleText text="Scroll ↓" animar={animarScroll} />}
       </p>
     </section>
   );

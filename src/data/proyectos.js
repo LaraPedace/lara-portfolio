@@ -1,12 +1,31 @@
 import universoPreview from "../assets/img/universo-preview.webp";
-import microdesastrePreview from "../assets/img/microdesastre-preview.webp";
+import microdesastrePreview from "../assets/img/microdesastre-preview.mp4";
 import casamorrilloPreview from "../assets/img/casamorrillo-preview.webp";
-import cumbiadelolvidoPreview from "../assets/img/cumbiadelolvido-preview.webp";
+import cumbiadelolvidoPreview from "../assets/img/cumbia-preview.mp4";
 import desaPreview from "../assets/img/desa-preview.webp";
 import galoPreview from "../assets/img/galo-preview.webp";
 
+// Todas las imágenes, gifs y videos de las carpetas de cada proyecto (src/assets/img/<carpeta>/).
+// Vite las carga de una vez; acá cada una se pide por su ruta con m("carpeta/archivo").
+const archivos = import.meta.glob("../assets/img/*/*.{webp,jpg,jpeg,png,gif,mp4}", {
+  eager: true,
+  import: "default",
+});
+
+// Devuelve la URL de un archivo. Si el nombre está mal escrito, avisa (en vez de mostrar
+// una imagen rota sin que nadie se dé cuenta).
+function m(ruta) {
+  const url = archivos[`../assets/img/${ruta}`];
+  if (!url) throw new Error(`proyectos.js: no existe el archivo "src/assets/img/${ruta}"`);
+  return url;
+}
+
 // Orden = orden en que aparecen en la home.
-// categoria = subtítulo de la tarjeta. preview = imagen de la tarjeta.
+// categoria = subtítulo de la tarjeta. preview = imagen (o video .mp4) de la tarjeta.
+// imagenes = lo que va arriba de todo en la página del proyecto (portada).
+// secciones = bloques de la página, cada uno con su título, texto e imágenes.
+// En "imagenes" puede haber imágenes (.webp/.jpg/.png), gifs o videos (.mp4): la página
+// decide cómo mostrar cada uno según la extensión.
 export const proyectos = [
   {
     id: "universo",
@@ -21,37 +40,29 @@ export const proyectos = [
     tipo: "Académico",
     disciplinas: ["Diseño Integral"],
     colaboracion: "c/ Jazmin Macfarlane",
-    imagenes: [
-      "/proyectos/universo/portada-1.jpg",
-      "/proyectos/universo/portada-2.gif",
-    ],
+    imagenes: [m("universo/universo_1.webp"), m("universo/universo.gif")],
     secciones: [
       {
         titulo: "Contexto",
         texto:
           "El proyecto se enfoca en primer grado, donde niños de entre siete y ocho años atraviesan distintos ritmos de aprendizaje. La enseñanza de la lectoescritura cuenta con escasos recursos multisensoriales y metodologías poco adaptables a las necesidades individuales, lo que puede dejar a algunos alumnos rezagados en el proceso.",
-        imagenes: [
-          "/proyectos/universo/contexto-1.jpg",
-          "/proyectos/universo/contexto-2.jpg",
-        ],
+        imagenes: [m("universo/universo_2.webp"), m("universo/universo_3.webp")],
       },
       {
         titulo: "La Grilla",
         texto:
           "Una grilla modular de círculos y cuadrados da origen a la tipografía, los personajes, los íconos y la trama de la alfombra.",
-        imagenes: [
-          "/proyectos/universo/grilla-1.jpg",
-          "/proyectos/universo/grilla-2.jpg",
-        ],
+        imagenes: [m("universo/universo_4.webp"), m("universo/universo_5.webp")],
       },
       {
         titulo: "Momento Escritura",
         texto:
           "Producto multisensorial diseñado para estimular el aprendizaje. Cada módulo estimula los sentidos y fomentan una escritura activa.",
         imagenes: [
-          "/proyectos/universo/escritura-1.jpg",
-          "/proyectos/universo/escritura-2.jpg",
-          "/proyectos/universo/escritura-3.jpg",
+          m("universo/universo_6.webp"),
+          m("universo/universo_7.webp"),
+          m("universo/universo_8.webp"),
+          m("universo/universo_despiece.mp4"),
         ],
       },
       {
@@ -59,9 +70,10 @@ export const proyectos = [
         texto:
           "Fomenta la motivación a la hora de aprender las letras del abecedario. Interactúa y propone un desafío de metas y recorridos.",
         imagenes: [
-          "/proyectos/universo/abecedario-1.jpg",
-          "/proyectos/universo/abecedario-2.jpg",
-          "/proyectos/universo/abecedario-3.jpg",
+          m("universo/universo_9.webp"),
+          m("universo/universo_10.webp"),
+          m("universo/universo_11.webp"),
+          m("universo/universo_12.webp"),
         ],
       },
       {
@@ -69,9 +81,9 @@ export const proyectos = [
         texto:
           "Espacio clave en la dinámica educativa, ya que fomenta la interacción y la concentración",
         imagenes: [
-          "/proyectos/universo/lectura-1.jpg",
-          "/proyectos/universo/lectura-2.jpg",
-          "/proyectos/universo/lectura-3.jpg",
+          m("universo/universo_13.webp"),
+          m("universo/universo_14.webp"),
+          m("universo/universo_15.webp"),
         ],
       },
       {
@@ -79,10 +91,11 @@ export const proyectos = [
         texto:
           "Seis personajes ilustrados para representar nuevos tópicos de la lectoescritura. Forman de una aplicación digital interactiva la lectura y la comprensión lectora. Herramienta tecnológica para utilizar en el momento de la alfombra.",
         imagenes: [
-          "/proyectos/universo/personajes-1.jpg",
-          "/proyectos/universo/personajes-2.jpg",
-          "/proyectos/universo/personajes-3.jpg",
-          "/proyectos/universo/personajes-4.jpg",
+          m("universo/universo_16.webp"),
+          m("universo/universo_17.webp"),
+          m("universo/universo_18.webp"),
+          m("universo/universo_19.webp"),
+          m("universo/universo_20.webp"),
         ],
       },
     ],
@@ -93,42 +106,51 @@ export const proyectos = [
     titulo: "Microdesastre",
     categoria: "Diseño Inmersivo",
     preview: microdesastrePreview,
-    descripcion: "Basado en el ODS 14, Vida Submarina. Abordamos los microplásticos, una contaminación invisible que llega del mar a nuestros platos de comida.",
+    descripcion:
+      "Basado en el ODS 14, Vida Submarina. Abordamos los microplásticos, una contaminación invisible que llega del mar a nuestros platos de comida.",
     sobreElProyecto:
       "A través de pantallas, luces y sonidos el espacio sumerge al visitante en un fondo marino incómodo debido a la fauna afectada por el plástico. Este proyecto busca hacer visible algo invisible.",
     anio: "2024",
     tipo: "Académico",
     disciplinas: ["Diseño Interactivo", "Resolume Arena", "Touch Designer"],
     colaboracion: "c/ Gonzalo Gumpel",
-    imagenes: ["/proyectos/microdesastre/portada.jpg"],
+    imagenes: [m("microdesastre/micro_1.webp")],
     secciones: [
       {
         titulo: "Contexto",
         texto:
           "Basado en el ODS 14, Vida Submarina. Abordamos los microplásticos, una contaminación invisible que llega del mar a nuestros platos de comida.",
-        imagenes: [],
+        imagenes: [m("microdesastre/micro_video_3.mp4"), m("microdesastre/micro_4.webp")],
       },
       {
         titulo: "La sala",
         texto: "",
         imagenes: [
-          "/proyectos/microdesastre/sala-1.jpg",
-          "/proyectos/microdesastre/sala-2.jpg",
+          m("microdesastre/micro_2.webp"),
+          m("microdesastre/micro_video_1.mp4"),
+          m("microdesastre/micro_3_facetracking.webp"),
+          m("microdesastre/micro_video_2.mp4"),
         ],
       },
       {
         titulo: "TVs",
         texto:
           "Proporcionan información para introducir al espectador en la temática. Utilización de datos y recursos gráficos para un mayor impacto.",
-        imagenes: ["/proyectos/microdesastre/tvs-1.jpg"],
+        imagenes: [
+          m("microdesastre/micro_monitor_0.mp4"),
+          m("microdesastre/micro_monitor_1.mp4"),
+          m("microdesastre/micro_monitor_2.mp4"),
+          m("microdesastre/micro_monitor_3.mp4"),
+        ],
       },
       {
         titulo: "Cuatro botones",
         texto: "",
         imagenes: [
-          "/proyectos/microdesastre/botones-1.jpg",
-          "/proyectos/microdesastre/botones-2.jpg",
-          "/proyectos/microdesastre/botones-3.jpg",
+          m("microdesastre/micro_boton_0.mp4"),
+          m("microdesastre/micro_boton_1_fauna.mp4"),
+          m("microdesastre/micro_boton_2_tiempo.mp4"),
+          m("microdesastre/micro_boton_3_juegos.mp4"),
         ],
       },
     ],
@@ -147,22 +169,25 @@ export const proyectos = [
     tipo: "Proyecto Personal",
     disciplinas: ["Piezas Visuales", "Fotografía"],
     colaboracion: "",
+    // Sin secciones: todas las piezas van en una sola secuencia
     imagenes: [
-      "/proyectos/casa-morrillo/portada.jpg",
-      "/proyectos/casa-morrillo/pieza-cas.jpg",
-      "/proyectos/casa-morrillo/animacion-1.gif",
-      "/proyectos/casa-morrillo/remera.jpg",
-      "/proyectos/casa-morrillo/stickers.png",
-      "/proyectos/casa-morrillo/mapa.png",
-      "/proyectos/casa-morrillo/foto-1.jpg",
-      "/proyectos/casa-morrillo/animacion-2.gif",
-      "/proyectos/casa-morrillo/cartel-puerta.jpg",
-      "/proyectos/casa-morrillo/pieza-entrada.jpg",
-      "/proyectos/casa-morrillo/bitacora.jpg",
-      "/proyectos/casa-morrillo/fosforos.png",
-      "/proyectos/casa-morrillo/gorra.jpg",
-      "/proyectos/casa-morrillo/foto-2.jpg",
-      "/proyectos/casa-morrillo/postales.jpg",
+      m("casa_morrillo/morrillo_1.webp"), // paisaje (portada)
+      m("casa_morrillo/morrillo_2.webp"), // afiche
+      m("casa_morrillo/morrillo_gif_1.gif"), // surf
+      m("casa_morrillo/morrillo_3.webp"), // remera
+      m("casa_morrillo/morrillo_4.webp"), // stickers
+      m("casa_morrillo/morrillo_5.webp"), // mapa
+      m("casa_morrillo/morrillo_6.webp"), // foto
+      m("casa_morrillo/morrillo_gif_2.gif"), // tablas
+      m("casa_morrillo/morrillo_7.webp"), // carteles de puerta
+      m("casa_morrillo/morrillo_8.webp"), // pieza de entrada
+      m("casa_morrillo/morrillo_9.webp"), // bitácora
+      m("casa_morrillo/morrillo_10.webp"), // fósforos
+      m("casa_morrillo/morrillo_11.webp"), // gorra
+      m("casa_morrillo/morrillo_12.webp"), // foto
+      m("casa_morrillo/morrillo_13.webp"), // sticker 2021→2026
+      m("casa_morrillo/morrillo_14.webp"), // postales
+      m("casa_morrillo/morrillo_15.webp"), // isla
     ],
     secciones: [],
   },
@@ -172,13 +197,26 @@ export const proyectos = [
     titulo: "Cumbia del Olvido",
     categoria: "Visuales en vivo",
     preview: cumbiadelolvidoPreview,
-    descripcion: "Visuales en vivo para “Cumbia del Olvido”, de Nicola Cruz: un set creado en TouchDesigner para tocarse en tiempo real desde Resolume.",
-    sobreElProyecto: "Una orquídea florece, se desarma y vuelve a encenderse siguiendo cada momento de la canción, de la intro suave al clímax.",
+    descripcion:
+      "Visuales en vivo para “Cumbia del Olvido”, de Nicola Cruz: un set creado en TouchDesigner para tocarse en tiempo real desde Resolume.",
+    sobreElProyecto:
+      "Una orquídea florece, se desarma y vuelve a encenderse siguiendo cada momento de la canción, de la intro suave al clímax.",
     anio: "2024",
     tipo: "Académico",
     disciplinas: ["Visuales en vivo", "Dirección de arte", "Resolume Arena", "TouchDesigner"],
     colaboracion: "",
-    imagenes: [],
+    // Sin secciones: todas las piezas van en una sola secuencia
+    imagenes: [
+      m("cumbia/cumbia_1.webp"),
+      m("cumbia/cumbia_2.webp"), // red de TouchDesigner
+      m("cumbia/cumbia_3.webp"), // en vivo
+      m("cumbia/cumbia_4.mp4"), // video completo (con sonido)
+      m("cumbia/cumbia_gif_1.gif"),
+      m("cumbia/cumbia_gif_2.gif"),
+      m("cumbia/cumbia_gif_3.gif"),
+      m("cumbia/cumbia_gif_4.gif"),
+      m("cumbia/cumbia_gif_5.gif"),
+    ],
     secciones: [],
   },
 
@@ -193,71 +231,53 @@ export const proyectos = [
       "Trabajo en el equipo de comunicación de DESA, el grupo detrás de Edea, Edelap, Eden, Edes, Edesa y Esed. Diseño para públicos muy distintos: clientes, empleados, inversores y la comunidad, cuidando que seis marcas convivan bajo un mismo sistema.",
     anio: "2026",
     tipo: "Profesional",
-    disciplinas: [
-      "Diseño gráfico",
-      "Diseño institucional",
-      "Comunicación corporativa",
-    ],
+    disciplinas: ["Diseño gráfico", "Diseño institucional", "Comunicación corporativa"],
     colaboracion: "",
-    imagenes: ["/proyectos/desa/portada.jpg"],
+    imagenes: [m("desa/desa_1.webp")],
     secciones: [
       {
         titulo: "Campaña: Fraude",
         texto:
           "Concientización sobre el fraude eléctrico. El desafío era hablar de un delito sin señalar a nadie: el foco está en la seguridad, en el impacto sobre la comunidad y en la denuncia anónima.",
-        imagenes: [
-          "/proyectos/desa/fraude-1.jpg",
-          "/proyectos/desa/fraude-2.jpg",
-          "/proyectos/desa/fraude-3.jpg",
-          "/proyectos/desa/fraude-4.jpg",
-        ],
+        imagenes: [m("desa/desa_2.webp")],
       },
       {
         titulo: "Stickers",
         texto:
           "Plancha para Edesa y Esed: herramientas del trabajo en calle, las marcas y el claim “Somos energía que transforma”.",
-        imagenes: ["/proyectos/desa/stickers.png"],
+        imagenes: [m("desa/desa_3.webp")],
       },
       {
         titulo: "Email marketing",
         texto:
           "Comunicaciones internas por mail para todo el grupo: lanzamientos, guías prácticas y novedades. Lectura rápida y jerarquías claras.",
-        imagenes: [
-          "/proyectos/desa/email-1.jpg",
-          "/proyectos/desa/email-2.jpg",
-          "/proyectos/desa/email-3.jpg",
-          "/proyectos/desa/email-4.jpg",
-        ],
+        imagenes: [m("desa/desa_4.webp")],
       },
       {
         titulo: "PRODESA 2026",
         texto:
           "Comunicaciones internas por mail para todo el grupo: lanzamientos, guías prácticas y novedades. Lectura rápida y jerarquías claras.",
         imagenes: [
-          "/proyectos/desa/prodesa-1.jpg",
-          "/proyectos/desa/prodesa-2.jpg",
-          "/proyectos/desa/prodesa-3.jpg",
-          "/proyectos/desa/prodesa-4.jpg",
+          m("desa/desa_5.webp"),
+          m("desa/desa_6.webp"),
+          m("desa/desa_7.webp"),
+          m("desa/desa_8.webp"),
+          m("desa/desa_9.webp"),
+          m("desa/desa_prodesa_1.mp4"),
+          m("desa/desa_prodesa_2.mp4"),
         ],
       },
       {
         titulo: "One pages",
         texto:
           "Infografías de una página para resumir resultados, informes y reconocimientos: mucha información ordenada para leerse de un vistazo.",
-        imagenes: [
-          "/proyectos/desa/onepage-1.jpg",
-          "/proyectos/desa/onepage-2.jpg",
-          "/proyectos/desa/onepage-3.jpg",
-        ],
+        imagenes: [m("desa/desa_10.webp")],
       },
       {
         titulo: "Presentaciones",
         texto:
           "Diseño de las presentaciones de dos campañas - Activá Tu Modo Eficiente y Programa de Oficios para los Premios Eikon 2026.",
-        imagenes: [
-          "/proyectos/desa/presentacion-1.jpg",
-          "/proyectos/desa/presentacion-2.jpg",
-        ],
+        imagenes: [m("desa/desa_11.mp4"), m("desa/desa_12.mp4")],
       },
     ],
   },
@@ -275,11 +295,26 @@ export const proyectos = [
     tipo: "Profesional",
     disciplinas: ["Branding", "Identidad visual", "Packaging", "Piezas visuales"],
     colaboracion: "",
-    imagenes: [],
+    imagenes: [m("galo/galo_1.webp")],
     secciones: [
       { titulo: "Contexto", texto: "", imagenes: [] },
-      { titulo: "Línea 01 - Galo", texto: "", imagenes: [] },
-      { titulo: "Línea 02 - Galo Coffee Roasters", texto: "", imagenes: [] },
+      {
+        titulo: "Línea 01 - Galo",
+        texto: "",
+        imagenes: [m("galo/galo_2.webp"), m("galo/galo_3.webp"), m("galo/galo_4.webp")],
+      },
+      {
+        titulo: "Línea 02 - Galo Coffee Roasters",
+        texto: "",
+        imagenes: [
+          m("galo/galo_5.webp"),
+          m("galo/galo_6.webp"),
+          m("galo/galo_7.webp"),
+          m("galo/galo_8.webp"),
+          m("galo/galo_9.webp"),
+          m("galo/galo_10.webp"),
+        ],
+      },
     ],
   },
 ];

@@ -6,6 +6,11 @@ import "./Proyectos.css";
 const VISTAS = ["lista", "grilla"];
 const FADE_MS = 250; // duración del fundido al cambiar de vista
 
+// La preview puede ser una imagen o un video (.mp4/.webm): el video va mudo y en loop
+const esVideo = (src) => /\.(mp4|webm)$/i.test(src);
+// Con "reducir movimiento", el video no arranca solo (se ve su primer cuadro)
+const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // Móvil/tablet: tarjetas apiladas (siempre igual).
 // Desktop (lg): se puede elegir entre
 //   - lista: una fila por proyecto (nombre a la izquierda; imagen y descripción a la derecha)
@@ -82,13 +87,26 @@ function Proyectos() {
                     lista ? "proyecto-aparece lg:aspect-auto lg:size-full" : "xl:aspect-card"
                   }`}
                 >
-                  <img
-                    src={proyecto.preview}
-                    alt={proyecto.titulo}
-                    loading="lazy"
-                    decoding="async"
-                    className="size-full object-cover transition duration-500 ease-out group-hover/img:scale-105 group-hover/img:blur-sm motion-reduce:transition-none"
-                  />
+                  {esVideo(proyecto.preview) ? (
+                    <video
+                      src={proyecto.preview}
+                      aria-label={proyecto.titulo}
+                      autoPlay={!reducirMovimiento}
+                      muted
+                      loop
+                      playsInline
+                      preload={reducirMovimiento ? "metadata" : "auto"}
+                      className="size-full object-cover transition duration-500 ease-out group-hover/img:scale-105 group-hover/img:blur-sm motion-reduce:transition-none"
+                    />
+                  ) : (
+                    <img
+                      src={proyecto.preview}
+                      alt={proyecto.titulo}
+                      loading="lazy"
+                      decoding="async"
+                      className="size-full object-cover transition duration-500 ease-out group-hover/img:scale-105 group-hover/img:blur-sm motion-reduce:transition-none"
+                    />
+                  )}
                 </div>
               </div>
 

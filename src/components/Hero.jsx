@@ -9,7 +9,7 @@ import "./Hero.css";
 // El texto del Hero (desktop) usa la misma regla para su entrada.
 let scrollYaAnimado = false;
 
-// ─── Desktop: entrada del texto la primera vez que carga la página ───
+// ─── Entrada del texto la primera vez que carga la página ───
 // "Hola, Soy Diseñadora Integral" aparece pegado al borde izquierdo del logo y
 // "Buenos Aires, 2026©" al derecho (con un fundido); después los dos se deslizan
 // hasta su lugar, en el centro.
@@ -19,9 +19,12 @@ const INTRO_PAUSA = 250; // quietos en los bordes (ms)
 const INTRO_MOVER = 1300; // viaje al centro (ms)
 const INTRO_DEMORA = 200; // espera antes de arrancar (ms)
 const INTRO_EASING = "cubic-bezier(0.65, 0, 0.35, 1)"; // arranca y frena suave
+// Móvil: el texto de arriba y de abajo de la estrella solo aparece con un fundido
+const MOVIL_FADE = 1200; // ms
+const MOVIL_ESCALON = 250; // "Buenos Aires" arranca un poquito después (ms)
 
 // Dibujo de las letras: cada # es un carácter, cada . es un espacio vacío
-const MASK = [
+const MASK_LARA = [
   "#######.........................#########.............################...................#########........",
   "#######........................##########.............###################................#########........",
   "#######........................##########.............####################..............###########.......",
@@ -45,8 +48,55 @@ const MASK = [
   "####################..#######..............#######....######.........########...#######.............######",
   "####################..#######..............#######....######..........#######..#######..............######",
 ];
-const COLS = MASK[0].length;
-const ROWS = MASK.length;
+
+// Móvil: en vez de LARA, la estrella del header (sale de STAR.svg pasada a esta grilla)
+const MASK_ESTRELLA = [
+  ".........................#.........................",
+  "........................###........................",
+  "........................###........................",
+  "........................###........................",
+  "........................###........................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  "##....................#######....................##",
+  "#####.................#######.................#####",
+  "..#######.............#######.............#######..",
+  "...##########.........#######.........##########...",
+  ".....###########.....#########.....###########.....",
+  ".......#############.#########.#############.......",
+  "........###################################........",
+  "..........###############################..........",
+  "............###########################............",
+  ".............#########################.............",
+  "...............#####################...............",
+  "................###################................",
+  "...............#####################...............",
+  ".............#########################.............",
+  "............###########################............",
+  "..........###############################..........",
+  "........###################################........",
+  ".......#############.#########.#############.......",
+  ".....###########.....#########.....###########.....",
+  "....#########.........#######.........#########....",
+  "..#######.............#######.............#######..",
+  "######................#######................######",
+  "##....................#######....................##",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  ".......................#####.......................",
+  "........................###........................",
+  "........................###........................",
+  "........................###........................",
+  "........................###........................",
+  ".........................#.........................",
+];
+
+const MOVIL_MQ = "(max-width: 767px)"; // igual que md en Tailwind
 
 // Caracteres que van apareciendo
 const CHARS = "&@+$%!?*#";
@@ -73,20 +123,45 @@ function Hero() {
   const saludoRef = useRef(null);
   const lugarRef = useRef(null);
 
+  // Móvil → estrella; desktop → LARA. Si cambia el ancho de la ventana, se rearma.
+  const [esMovil, setEsMovil] = useState(() => window.matchMedia(MOVIL_MQ).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(MOVIL_MQ);
+    const cambiar = () => setEsMovil(mq.matches);
+    mq.addEventListener("change", cambiar);
+    return () => mq.removeEventListener("change", cambiar);
+  }, []);
+  const MASK = esMovil ? MASK_ESTRELLA : MASK_LARA;
+  const COLS = MASK[0].length;
+  const ROWS = MASK.length;
+
   // Se decide una sola vez al montar si "Scroll ↓" se anima (y se marca como ya animado)
   const [animarScroll] = useState(() => !scrollYaAnimado);
   useEffect(() => {
     scrollYaAnimado = true;
   }, []);
 
-  // Entrada del texto (desktop, primera carga). Es un layout effect para esconder el
+  // Entrada del texto (primera carga; en desktop además se mueve al centro). Es un layout effect para esconder el
   // texto antes de que se dibuje la página, así no aparece un instante en el centro.
   useLayoutEffect(() => {
     if (!animarScroll) return;
-    if (!window.matchMedia(INTRO_MQ).matches) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const textos = [saludoRef.current, lugarRef.current];
+
+    // Móvil: solo un fundido suave (primero el saludo, apenas después "Buenos Aires")
+    if (!window.matchMedia(INTRO_MQ).matches) {
+      const fundidos = textos.map((el, i) =>
+        el.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: MOVIL_FADE,
+          delay: INTRO_DEMORA + i * MOVIL_ESCALON,
+          easing: "ease-out",
+          fill: "backwards",
+        }),
+      );
+      return () => fundidos.forEach((a) => a.cancel());
+    }
+
     textos.forEach((el) => (el.style.opacity = "0"));
     let animaciones = [];
     let cancelado = false;
@@ -289,10 +364,10 @@ function Hero() {
       root.innerHTML = "";
       dust.innerHTML = "";
     };
-  }, []);
+  }, [MASK, COLS, ROWS]);
 
   return (
-    <section ref={sectionRef} className="hero relative flex h-screen items-center justify-center overflow-hidden bg-white px-4 xl:px-8">
+    <section ref={sectionRef} style={{ "--cols": COLS }} className="hero relative flex h-screen items-center justify-center overflow-hidden bg-white px-4 xl:px-8">
       <div ref={dustRef} className="hero-dust font-grotesk" aria-hidden="true"></div>
       {/* Móvil: saludo arriba del logo y "Buenos Aires" abajo a la derecha.
           Desktop: todo el texto junto, centrado encima del logo (ver .hero-contenido en Hero.css) */}
@@ -318,7 +393,7 @@ function Hero() {
           2026©
         </p>
       </div>
-      <p className="absolute bottom-19 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
+      <p className="absolute bottom-12 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
         <ScrambleText text="Scroll ↓" animar={animarScroll} />
       </p>
     </section>

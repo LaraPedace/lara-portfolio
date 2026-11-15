@@ -51,7 +51,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  font-size: max(9px, calc(var(--ancho) / 106 / 0.602));
+  font-size: max(9px, calc(var(--ancho) / 106 / 0.602)); /* siempre el tamaño de los caracteres de LARA */
   opacity: var(--logo-opacidad);
 }
 
@@ -63,6 +63,23 @@
 @media (width >= 80rem) {
   .hero {
     --margen: 4rem;
+  }
+}
+
+/* Móvil: la estrella (más alta que ancha) también tiene que entrar a lo alto, junto con
+   el header, el texto de arriba y de abajo y "Scroll ↓" (≈ 26rem en total). La estrella mide 0.87 de ancho por 1 de alto. */
+@media (width < 48rem) {
+  .hero {
+    --ancho: min(100vw - var(--margen), (100svh - 26rem) * 0.87);
+  }
+
+  /* El texto va de margen a margen aunque la estrella quede más angosta */
+  .hero-contenido {
+    width: 100%;
+  }
+
+  .hero-contenido .hero-stage {
+    justify-self: center;
   }
 }
 

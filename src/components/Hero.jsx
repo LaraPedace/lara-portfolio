@@ -1,11 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ScrambleText from "./ScrambleText.jsx";
+import star from "../assets/img/STAR.svg";
 import "./Hero.css";
 
 // "Scroll ↓" hace el efecto de caracteres random solo la primera vez que carga la página.
 // Esta variable vive mientras la pestaña esté abierta: si vas a Info y volvés, ya no
 // se repite; si recargás la página, sí.
+// El texto del Hero (desktop) usa la misma regla para su entrada.
 let scrollYaAnimado = false;
+
+// ─── Desktop: entrada del texto la primera vez que carga la página ───
+// "Hola, Soy Diseñadora Integral" aparece pegado al borde izquierdo del logo y
+// "Buenos Aires, 2026©" al derecho (con un fundido); después los dos se deslizan
+// hasta su lugar, en el centro.
+const INTRO_MQ = "(min-width: 48rem)"; // desde md, igual que en Hero.css
+const INTRO_FADE = 800; // fundido (ms)
+const INTRO_PAUSA = 250; // quietos en los bordes (ms)
+const INTRO_MOVER = 1300; // viaje al centro (ms)
+const INTRO_DEMORA = 200; // espera antes de arrancar (ms)
+const INTRO_EASING = "cubic-bezier(0.65, 0, 0.35, 1)"; // arranca y frena suave
 
 // Dibujo de las letras: cada # es un carácter, cada . es un espacio vacío
 const MASK = [
@@ -52,18 +65,13 @@ function shuffle(el) {
   el.style.setProperty("--o", random(LEVELS));
 }
 
-// ─── Móvil: logo estirado que vuelve a su tamaño con el scroll (estilo monopol-magazin.de) ───
-const ESTIRADO_ALTO = 0.88; // el logo estirado ocupa el 88% del alto visible (svh)
-const ESTIRADO_HASTA = 0.65; // vuelve a tamaño normal al scrollear el 65% del alto visible
-const ESTIRADO_MQ = "(max-width: 767px)"; // solo móvil
-
 function Hero() {
   const laraRef = useRef(null);
   const dustRef = useRef(null);
   const sectionRef = useRef(null);
   const stageRef = useRef(null);
-  const canvasRef = useRef(null);
-  const scrollTextRef = useRef(null);
+  const saludoRef = useRef(null);
+  const lugarRef = useRef(null);
 
   // Se decide una sola vez al montar si "Scroll ↓" se anima (y se marca como ya animado)
   const [animarScroll] = useState(() => !scrollYaAnimado);
@@ -71,15 +79,56 @@ function Hero() {
     scrollYaAnimado = true;
   }, []);
 
+  // Entrada del texto (desktop, primera carga). Es un layout effect para esconder el
+  // texto antes de que se dibuje la página, así no aparece un instante en el centro.
+  useLayoutEffect(() => {
+    if (!animarScroll) return;
+    if (!window.matchMedia(INTRO_MQ).matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const textos = [saludoRef.current, lugarRef.current];
+    textos.forEach((el) => (el.style.opacity = "0"));
+    let animaciones = [];
+    let cancelado = false;
+
+    // Se mide cuando la tipografía ya cargó (el ancho del texto cambia con la letra)
+    document.fonts.ready.then(() => {
+      if (cancelado) return;
+      const logo = stageRef.current.getBoundingClientRect();
+      const saludo = saludoRef.current.getBoundingClientRect();
+      const lugar = lugarRef.current.getBoundingClientRect();
+      const desde = [logo.left - saludo.left, logo.right - lugar.right]; // px hasta cada borde
+
+      const total = INTRO_FADE + INTRO_PAUSA + INTRO_MOVER;
+      const finFade = INTRO_FADE / total;
+      const finPausa = (INTRO_FADE + INTRO_PAUSA) / total;
+      animaciones = textos.map((el, i) => {
+        const x = `translateX(${desde[i]}px)`;
+        return el.animate(
+          [
+            { opacity: 0, transform: x, easing: "ease-out" },
+            { opacity: 1, transform: x, offset: finFade },
+            { opacity: 1, transform: x, offset: finPausa, easing: INTRO_EASING },
+            { opacity: 1, transform: "translateX(0)" },
+          ],
+          { duration: total, delay: INTRO_DEMORA, fill: "backwards" },
+        );
+      });
+      textos.forEach((el) => (el.style.opacity = ""));
+    });
+
+    return () => {
+      cancelado = true;
+      animaciones.forEach((a) => a.cancel());
+      textos.forEach((el) => (el.style.opacity = ""));
+    };
+  }, [animarScroll]);
+
   useEffect(() => {
     const root = laraRef.current;
     const dust = dustRef.current;
     const section = sectionRef.current;
-    const stage = stageRef.current;
-    const canvas = canvasRef.current;
-    const scrollText = scrollTextRef.current;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const movilMq = window.matchMedia(ESTIRADO_MQ);
 
     // 1. Crear un <span> por cada # del dibujo (el logo normal)
     const cells = [];
@@ -106,206 +155,6 @@ function Hero() {
       }
     }
 
-    // ─── Móvil: logo estirado sin deformar los caracteres ───
-    // Mientras está estirado, el logo se dibuja en un <canvas>: cada fila del dibujo se
-    // repite en K filas de caracteres de tamaño normal, una debajo de otra. Al scrollear,
-    // las filas se juntan y las que sobran se desvanecen hasta quedar una por fila; ahí el
-    // canvas se esconde y vuelve a verse el logo normal (los <span>).
-    // Por qué canvas: con ~8000 caracteres como elementos de la página, el celular se trababa.
-    // Cada sub-fila se dibuja una vez en una imagen en memoria ("hoja"), y en cada cuadro
-    // del scroll solo se estampan esas tiras en su lugar.
-    const ctx = canvas.getContext("2d");
-    const hoja = document.createElement("canvas");
-    const hojaCtx = hoja.getContext("2d");
-    const probe = document.createElement("div"); // medidor de 100svh (ver medir)
-    probe.style.cssText =
-      "position:absolute;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none";
-    document.body.appendChild(probe);
-
-    let estirado = false; // modo móvil activo
-    let enCanvas = false; // el logo se está mostrando en el canvas (todavía estirado)
-    let K = 1; // sub-filas por fila del dibujo
-    let escalaInicial = 1; // cuántas veces más alto arranca el logo
-    let distancia = 1; // cuánto hay que scrollear para que vuelva a su tamaño
-    let ancho = 0; // ancho del logo (px)
-    let celda = 0; // ancho de una columna (px)
-    let filaAlto = 0; // alto de una fila de caracteres (px)
-    let dpr = 1;
-    let fuente = "";
-    let rojo = "#e30613";
-    let visibles = 1; // sub-filas visibles por fila del dibujo
-    let hojaCeldas = []; // celdas de la hoja: { x, fila (índice de tira) }
-    let frame = null;
-
-    // Dibuja un carácter random en la hoja (en su celda)
-    function dibujarCelda(c) {
-      const px = c.x * celda * dpr;
-      const py = c.fila * filaAlto * dpr;
-      hojaCtx.clearRect(px, py, celda * dpr, filaAlto * dpr);
-      hojaCtx.globalAlpha = random(LEVELS);
-      hojaCtx.fillText(random(CHARS), px + (celda * dpr) / 2, py + (filaAlto * dpr) / 2);
-    }
-
-    function prepararHoja() {
-      hoja.width = Math.round(ancho * dpr);
-      hoja.height = Math.round(ROWS * K * filaAlto * dpr);
-      hojaCtx.font = fuente;
-      hojaCtx.fillStyle = rojo;
-      hojaCtx.textAlign = "center";
-      hojaCtx.textBaseline = "middle";
-      hojaCeldas = [];
-      for (let m = 0; m < ROWS; m++) {
-        for (let j = 0; j < K; j++) {
-          for (const x of columnasSubFila(m, j)) {
-            const c = { x, j, fila: m * K + j };
-            hojaCeldas.push(c);
-            dibujarCelda(c);
-          }
-        }
-      }
-    }
-
-    // Qué columnas tienen carácter en la sub-fila j de la fila m del dibujo.
-    // Si se repitiera la fila tal cual, las diagonales quedarían como escalones altos
-    // (todo "cuadrado") y los bordes como líneas rectas que parecen un contorno. Por eso:
-    // - las sub-filas intermedias corren los bordes de cada trazo de a poco hacia los de la
-    //   fila siguiente (diagonales suaves);
-    // - y mueven los bordes al azar ±1 carácter (bordes irregulares, sin línea).
-    // La sub-fila 0 es exactamente la fila del dibujo: coincide con el logo normal.
-    function columnasSubFila(m, j) {
-      const actual = tramos(MASK[m]);
-      if (j === 0) return llenar(actual, 0);
-      const siguiente = m + 1 < ROWS ? tramos(MASK[m + 1]) : actual;
-      const t = j / K;
-      let bordes = actual;
-      if (siguiente.length === actual.length) {
-        bordes = actual.map(([a, b], i) => [
-          a + (siguiente[i][0] - a) * t,
-          b + (siguiente[i][1] - b) * t,
-        ]);
-      } else if (t >= 0.5) {
-        bordes = siguiente; // cambia la forma (ej. se abre un hueco): se pasa a la siguiente
-      }
-      return llenar(bordes, 1);
-    }
-
-    // Tramos de "#" seguidos de una fila: [inicio, fin) en columnas
-    function tramos(fila) {
-      const lista = [];
-      let inicio = -1;
-      for (let x = 0; x <= fila.length; x++) {
-        const lleno = fila[x] === "#";
-        if (lleno && inicio < 0) inicio = x;
-        if (!lleno && inicio >= 0) {
-          lista.push([inicio, x]);
-          inicio = -1;
-        }
-      }
-      return lista;
-    }
-
-    // Columnas de cada tramo; "azar" mueve cada borde ±1 con algo de probabilidad
-    function llenar(bordes, azar) {
-      const cols = [];
-      const mover = () => (azar && Math.random() < 0.35 ? (Math.random() < 0.5 ? -1 : 1) : 0);
-      for (const [a, b] of bordes) {
-        const desde = Math.max(0, Math.round(a) + mover());
-        const hasta = Math.min(COLS, Math.round(b) + mover());
-        for (let x = desde; x < hasta; x++) cols.push(x);
-      }
-      return cols;
-    }
-
-    function medir() {
-      estirado = movilMq.matches && !reduce;
-      section.classList.toggle("hero-estirado", estirado);
-      stage.style.transform = "";
-      if (!estirado) {
-        mostrarCanvas(false);
-        return;
-      }
-
-      // El logo arranca justo debajo del header
-      const header = document.querySelector("header");
-      const top = (header ? header.offsetHeight : 52) + 12;
-      section.style.setProperty("--hero-top", `${top}px`);
-
-      // 100svh = alto visible con las barras del navegador abiertas: no cambia cuando la
-      // barra de Safari aparece o se esconde, así el logo no salta.
-      const svh = probe.offsetHeight;
-      ancho = stage.offsetWidth;
-      celda = ancho / COLS;
-      filaAlto = celda / 0.735; // igual que en Hero.css
-      const altoNormal = filaAlto * ROWS;
-      // Alto estirado: 88% de la pantalla, pero sin tapar "Scroll ↓"
-      const limite = Math.min(svh * ESTIRADO_ALTO, scrollText.offsetTop - 16 - top);
-      escalaInicial = Math.max(1, limite / altoNormal);
-      distancia = svh * ESTIRADO_HASTA;
-      K = Math.max(1, Math.ceil(escalaInicial));
-
-      // Misma letra que el logo normal
-      const estilo = getComputedStyle(root);
-      dpr = Math.min(3, window.devicePixelRatio || 1);
-      fuente = `${estilo.fontWeight} ${parseFloat(estilo.fontSize) * dpr}px ${estilo.fontFamily}`;
-      rojo = estilo.color;
-
-      canvas.width = Math.round(ancho * dpr);
-      canvas.height = Math.round(altoNormal * escalaInicial * dpr);
-      canvas.style.width = `${ancho}px`;
-      canvas.style.height = `${altoNormal * escalaInicial}px`;
-      prepararHoja();
-      actualizar();
-    }
-
-    function mostrarCanvas(si) {
-      if (si === enCanvas) return;
-      enCanvas = si;
-      canvas.style.display = si ? "block" : "none";
-      root.style.visibility = si ? "hidden" : "";
-      if (si) clear(); // mientras está en el canvas, los caracteres no se dispersan
-    }
-
-    // Estampa las sub-filas en su lugar según el scroll
-    function actualizar() {
-      frame = null;
-      if (!estirado) return;
-      const y = Math.max(0, window.scrollY);
-      const progreso = Math.min(1, y / distancia);
-      const escala = escalaInicial + (1 - escalaInicial) * progreso;
-
-      // Mientras se encoge, el logo queda quieto arriba (compensa el scroll); cuando llega
-      // a su tamaño normal, se va con la página. Como el borde de abajo del logo y el
-      // comienzo de la sección siguiente se mueven en línea recta, nunca se tocan.
-      stage.style.transform = `translateY(${Math.min(y, distancia).toFixed(1)}px)`;
-
-      if (progreso >= 1 || escalaInicial <= 1) {
-        mostrarCanvas(false);
-        return;
-      }
-      mostrarCanvas(true);
-
-      // Cuántas sub-filas se ven por fila del dibujo: K arriba de todo, 1 al final.
-      // Se reparten el alto de cada fila estirada; la última va apareciendo/desvaneciéndose.
-      visibles = 1 + ((K - 1) * (escala - 1)) / (escalaInicial - 1);
-      const paso = (filaAlto * escala) / visibles;
-      const tiraAlto = filaAlto * dpr;
-      const hastaJ = Math.min(K, Math.ceil(visibles));
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let m = 0; m < ROWS; m++) {
-        for (let j = 0; j < hastaJ; j++) {
-          ctx.globalAlpha = Math.min(1, visibles - j);
-          const destino = Math.round((m * filaAlto * escala + j * paso) * dpr);
-          ctx.drawImage(hoja, 0, (m * K + j) * tiraAlto, hoja.width, tiraAlto, 0, destino, hoja.width, tiraAlto);
-        }
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function onScrollEstirado() {
-      if (estirado && !frame) frame = requestAnimationFrame(actualizar);
-    }
-
     // 2. Crear los caracteres sueltos del fondo
     const motes = [];
     function place(mote) {
@@ -328,17 +177,7 @@ function Hero() {
     let timer = null;
     function flicker() {
       const amount = Math.round(cells.length * share);
-      if (enCanvas) {
-        // Estirado: se cambian caracteres de las sub-filas que se ven, en la hoja
-        const hastaJ = Math.min(K, Math.ceil(visibles));
-        for (let i = 0; i < amount; i++) {
-          const c = random(hojaCeldas);
-          if (c.j < hastaJ) dibujarCelda(c);
-        }
-        if (!frame) frame = requestAnimationFrame(actualizar);
-      } else {
-        for (let i = 0; i < amount; i++) shuffle(random(cells).el);
-      }
+      for (let i = 0; i < amount; i++) shuffle(random(cells).el);
       if (Math.random() < (reduce ? 0.3 : 0.12)) place(random(motes));
     }
 
@@ -405,7 +244,7 @@ function Hero() {
     }
 
     function ask() {
-      if (!visible || enCanvas) return; // fuera de pantalla o estirado: no se calcula nada
+      if (!visible) return; // fuera de pantalla: no se calcula nada
       if (!queued) {
         queued = true;
         requestAnimationFrame(apply);
@@ -436,17 +275,9 @@ function Hero() {
     window.addEventListener("scroll", ask, { passive: true });
     document.documentElement.addEventListener("pointerleave", clear);
 
-    // Arrancar el estirado (cuando la tipografía ya cargó, para dibujarla bien en el canvas)
-    medir();
-    document.fonts?.ready.then(() => estirado && medir());
-    window.addEventListener("scroll", onScrollEstirado, { passive: true });
-    window.addEventListener("resize", medir);
-    movilMq.addEventListener("change", medir);
-
     // 5. Limpieza: se ejecuta si el componente desaparece de la página
     return () => {
       clearInterval(timer);
-      cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerdown", move);
@@ -455,13 +286,6 @@ function Hero() {
       window.removeEventListener("blur", clear);
       window.removeEventListener("scroll", ask);
       document.documentElement.removeEventListener("pointerleave", clear);
-      window.removeEventListener("scroll", onScrollEstirado);
-      window.removeEventListener("resize", medir);
-      movilMq.removeEventListener("change", medir);
-      probe.remove();
-      section.classList.remove("hero-estirado");
-      stage.style.transform = "";
-      root.style.visibility = "";
       root.innerHTML = "";
       dust.innerHTML = "";
     };
@@ -470,17 +294,31 @@ function Hero() {
   return (
     <section ref={sectionRef} className="hero relative flex h-screen items-center justify-center overflow-hidden bg-white px-4 xl:px-8">
       <div ref={dustRef} className="hero-dust font-grotesk" aria-hidden="true"></div>
-      <div ref={stageRef} className="hero-stage relative font-grotesk">
-        <h1 ref={laraRef} className="hero-lara" aria-label="Lara"></h1>
-        {/* Móvil: logo estirado (se dibuja desde Hero.jsx; oculto en desktop) */}
-        <canvas
-          ref={canvasRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute top-0 left-0"
-          style={{ display: "none" }}
-        />
+      {/* Móvil: saludo arriba del logo y "Buenos Aires" abajo a la derecha.
+          Desktop: todo el texto junto, centrado encima del logo (ver .hero-contenido en Hero.css) */}
+      <div className="hero-contenido font-grotesk">
+        <p ref={saludoRef} className="hero-saludo text-hero-sm font-bold md:text-3xl">
+          Hola,
+          <br />
+          Soy Diseñadora Integral
+        </p>
+        <div ref={stageRef} className="hero-stage relative">
+          <h1 ref={laraRef} className="hero-lara" aria-label="Lara"></h1>
+        </div>
+        <p ref={lugarRef} className="hero-lugar text-right text-hero-sm font-bold md:text-3xl">
+          <span className="text-rojo">
+            <span
+              aria-hidden="true"
+              className="hero-estrella bg-rojo"
+              style={{ maskImage: `url("${star}")`, WebkitMaskImage: `url("${star}")` }}
+            />
+            Buenos Aires,
+          </span>
+          <br />
+          2026©
+        </p>
       </div>
-      <p ref={scrollTextRef} className="absolute bottom-19 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
+      <p className="absolute bottom-19 xl:bottom-5 w-full text-center text-base xl:text-base font-bold text-rojo ">
         <ScrambleText text="Scroll ↓" animar={animarScroll} />
       </p>
     </section>

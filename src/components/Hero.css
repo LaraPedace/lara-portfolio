@@ -1,11 +1,14 @@
 .hero {
-  --rojo: #e30613;
+  /* Logo en gris: cada carácter ya tiene su propia opacidad al azar (LEVELS en Hero.jsx),
+     así que salen distintos tonos de gris. --logo-opacidad baja todo el logo junto. */
+  --logo-color: #6b6b6b;
+  --logo-opacidad: 0.35;
   --cols: 106;
   /* Tamaño del logo: todo el ancho menos el padding de la sección (px-4 / xl:px-8),
      sin pasarse de alto en pantallas bajas (el logo es ~0.28 veces su ancho de alto) */
   --margen: 2rem;
   --ancho: min(100vw - var(--margen), (100svh - 10rem) * 3.5);
-  color: var(--rojo);
+  color: var(--logo-color);
   user-select: none;
   cursor: default;
 }
@@ -14,6 +17,8 @@
 .hero-stage {
   width: var(--ancho);
   container-type: inline-size;
+  color: var(--logo-color);
+  opacity: var(--logo-opacidad);
 }
 
 .hero-lara {
@@ -47,6 +52,7 @@
   inset: 0;
   pointer-events: none;
   font-size: max(9px, calc(var(--ancho) / 106 / 0.602));
+  opacity: var(--logo-opacidad);
 }
 
 .hero-dust span {
@@ -60,15 +66,58 @@
   }
 }
 
-/* Móvil: el logo arranca estirado en vertical y vuelve a su tamaño al scrollear.
-   La clase .hero-estirado la agrega Hero.jsx solo en móvil (hasta 767px) y sin
-   "reducir movimiento"; en desktop esto no se aplica. El logo se ubica arriba (debajo
-   del header). Mientras está estirado se dibuja en un <canvas> (ver Hero.jsx): cada fila
-   del dibujo se repite en varias filas de caracteres de tamaño normal, así los
-   caracteres NO se deforman. */
-.hero.hero-estirado {
-  align-items: flex-start;
-  padding-top: var(--hero-top, 4rem);
+/* Texto del Hero.
+   Móvil: una columna → saludo, logo, "Buenos Aires" (alineado a la derecha).
+   Desktop: el logo ocupa toda la grilla y el texto queda encima, centrado; la columna
+   del medio mide lo que el renglón más largo, así "Buenos Aires" termina justo donde
+   termina "Integral". */
+.hero-contenido {
+  display: grid;
+  row-gap: 1.625rem;
+  color: #000;
+}
+
+.hero-lugar {
+  justify-self: end;
+}
+
+/* Estrella delante de "Buenos Aires": del alto de la letra, con la forma del logo del header */
+.hero-estrella {
+  display: inline-block;
+  width: 1.04em;
+  height: 1.2em;
+  margin-right: 0.15em;
+  vertical-align: -0.3em;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+@media (width >= 48rem) {
+  .hero-contenido {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    row-gap: 0;
+  }
+
+  .hero-contenido .hero-stage {
+    grid-area: 1 / 1 / -1 / -1;
+  }
+
+  .hero-saludo,
+  .hero-lugar {
+    position: relative; /* encima del logo */
+    grid-column: 2;
+    white-space: nowrap;
+  }
+
+  .hero-saludo {
+    grid-row: 2;
+  }
+
+  .hero-lugar {
+    grid-row: 3;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

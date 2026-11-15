@@ -71,7 +71,7 @@ function Proyectos() {
             <TransitionLink
               to={`/proyectos/${proyecto.id}`}
               className={`group flex flex-col transition-colors duration-300 hover:text-rojo ${
-                lista ? "lg:grid lg:grid-cols-12 lg:gap-x-5 lg:pt-4.75 lg:pb-12.5" : ""
+                lista ? "lg:grid lg:grid-cols-12 lg:gap-x-5 lg:py-8.5" : ""
               }`}
             >
               {/* Imagen. En lista: el contenedor de afuera reserva el lugar

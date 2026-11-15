@@ -76,7 +76,7 @@ function Proyectos() {
             >
               {/* Imagen. En lista: el contenedor de afuera reserva el lugar
                   y el de adentro aparece con un fundido al scrollear */}
-              <div className={lista ? "lg:col-span-5 lg:col-start-8 lg:aspect-project-row" : ""}>
+              <div className={lista ? "lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:aspect-project-row" : ""}>
                 <div
                   className={`group/img aspect-square cursor-star overflow-hidden ${
                     lista ? "proyecto-aparece lg:aspect-auto lg:size-full" : "xl:aspect-card"
@@ -92,15 +92,16 @@ function Proyectos() {
                 </div>
               </div>
 
-              <div className={lista ? "lg:col-span-7 lg:row-start-1 lg:mt-5.25" : ""}>
+              <div className={lista ? "lg:col-span-7 lg:col-start-1 lg:row-start-1 lg:mt-5.25" : ""}>
                 <h3 className={`mt-2 text-2xl xl:text-4xl font-medium tracking-tighter md:mt-3 ${lista ? "lg:mt-0" : ""}`}>
                   {proyecto.titulo}
                 </h3>
                 <p className="tracking-tighter  md:text-lg">{proyecto.categoria}</p>
               </div>
 
+              {/* Descripción: abajo a la izquierda, a la altura del borde de abajo de la imagen */}
               {lista && proyecto.descripcion && (
-                <p className="hidden tracking-tighter md:text-xl w-3/4 lg:col-span-5 lg:col-start-8 lg:mt-4.5 lg:block">
+                <p className="hidden tracking-tighter md:text-xl  text-balance lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:self-end lg:block">
                   {proyecto.descripcion}
                 </p>
               )}

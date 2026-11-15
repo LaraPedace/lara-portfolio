@@ -13,7 +13,7 @@ export const proyectos = [
     categoria: "Diseño Integral",
     preview: universoPreview,
     descripcion:
-      "Un aula multisensorial para el aprendizaje de la lectoescritura en primer grado.",
+      "Un aula multisensorial para el aprendizaje de la lectoescritura en primer grado. Inspirado en la interacción entre tecnología, pedagogía y creatividad.",
     sobreElProyecto:
       "Inspirado en la interacción entre tecnología, pedagogía y creatividad, el espacio invita a los niños a descubrir letras, sonidos y palabras mientras exploran texturas, colores y formas que estimulan sus sentidos. Este proyecto celebra el aprendizaje como un acto de juego, conexión y descubrimiento colectivo en una experiencia envolvente.",
     anio: "2024",
@@ -92,7 +92,7 @@ export const proyectos = [
     titulo: "Microdesastre",
     categoria: "Diseño Inmersivo",
     preview: microdesastrePreview,
-    descripcion: "Una sala inmersiva sobre los microplásticos.",
+    descripcion: "Basado en el ODS 14, Vida Submarina. Abordamos los microplásticos, una contaminación invisible que llega del mar a nuestros platos de comida.",
     sobreElProyecto:
       "A través de pantallas, luces y sonidos el espacio sumerge al visitante en un fondo marino incómodo debido a la fauna afectada por el plástico. Este proyecto busca hacer visible algo invisible.",
     anio: "2024",

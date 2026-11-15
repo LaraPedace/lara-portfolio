@@ -38,6 +38,14 @@ function tercio(src) {
   return { src, tercio: true };
 }
 
+// Escalonada: cada una en su fila, pegada a la "izquierda" o a la "derecha".
+// Dos seguidas (una a cada lado) forman una escalera.
+// tamaño "grande" = 5 de 8 columnas (en móvil, todo el ancho);
+// "chica" = 3 de 8, hacia el centro (en móvil, dos tercios), ideal para piezas verticales.
+function escalonada(src, lado, tamaño = "grande") {
+  return { src, escalonada: lado, tamaño };
+}
+
 // Video a todo el ancho con controles (play, volumen…), para los que tienen sonido.
 function conSonido(src) {
   return { src, ancha: true, controles: true };
@@ -331,45 +339,44 @@ export const proyectos = [
         titulo: "Campaña: Fraude",
         texto:
           "Concientización sobre el fraude eléctrico. El desafío era hablar de un delito sin señalar a nadie: el foco está en la seguridad, en el impacto sobre la comunidad y en la denuncia anónima.",
-        imagenes: [m("desa/desa_2.webp")],
+        imagenes: [ancha(m("desa/desa_2.webp"))],
       },
       {
         titulo: "Stickers",
         texto:
           "Plancha para Edesa y Esed: herramientas del trabajo en calle, las marcas y el claim “Somos energía que transforma”.",
-        imagenes: [m("desa/desa_3.webp")],
+        imagenes: [ancha(m("desa/desa_3.webp"))],
       },
       {
         titulo: "Email marketing",
         texto:
           "Comunicaciones internas por mail para todo el grupo: lanzamientos, guías prácticas y novedades. Lectura rápida y jerarquías claras.",
-        imagenes: [m("desa/desa_4.webp")],
+        imagenes: [ancha(m("desa/desa_4.webp"))],
       },
       {
         titulo: "PRODESA 2026",
         texto:
-          "Comunicaciones internas por mail para todo el grupo: lanzamientos, guías prácticas y novedades. Lectura rápida y jerarquías claras.",
+          "Prode interno del Mundial 2026 para los empleados de las seis distribuidoras. Identidad del juego y la secuencia de comunicación, del teaser a los ganadores, adaptada a mailing, WhatsApp.",
         imagenes: [
-          m("desa/desa_5.webp"),
-          m("desa/desa_6.webp"),
-          m("desa/desa_7.webp"),
-          m("desa/desa_8.webp"),
-          m("desa/desa_9.webp"),
-          m("desa/desa_prodesa_1.mp4"),
-          m("desa/desa_prodesa_2.mp4"),
+          ancha(m("desa/desa_5.webp")), // piezas del prode
+          escalonada(m("desa/desa_prodesa_1.mp4"), "derecha", "chica"), // premio: TV
+          escalonada(m("desa/desa_prodesa_2.mp4"), "izquierda", "chica"), // premio: pelota
         ],
       },
       {
         titulo: "One pages",
         texto:
           "Infografías de una página para resumir resultados, informes y reconocimientos: mucha información ordenada para leerse de un vistazo.",
-        imagenes: [m("desa/desa_10.webp")],
+        imagenes: [ancha(m("desa/desa_6.webp"))],
       },
       {
         titulo: "Presentaciones",
         texto:
           "Diseño de las presentaciones de dos campañas - Activá Tu Modo Eficiente y Programa de Oficios para los Premios Eikon 2026.",
-        imagenes: [m("desa/desa_11.mp4"), m("desa/desa_12.mp4")],
+        imagenes: [
+          escalonada(m("desa/desa_8.mp4"), "derecha"), // Programa de Oficios
+          escalonada(m("desa/desa_7.mp4"), "izquierda"), // Activá Tu Modo Eficiente
+        ],
       },
     ],
   },

@@ -38,28 +38,56 @@ function Media({ src, alt, controles = false }) {
   return <img src={src} alt={alt} loading="lazy" decoding="async" className="h-auto w-full" />;
 }
 
-// Grilla de imágenes. Cada item es una URL o un objeto de ancha(), tercio(), centrada() o
-// conSonido() (ver proyectos.js).
-//   - Si alguna viene marcada (ancha/tercio): las anchas van a todo el ancho, los tercios de
-//     a tres y el resto de a dos.
+// Escalonadas: clases escritas completas para que Tailwind las encuentre (grilla de 24).
+const ESCALONADA = {
+  grande: {
+    izquierda: "col-span-24 lg:col-span-15 lg:col-start-1",
+    derecha: "col-span-24 lg:col-span-15 lg:col-start-10",
+  },
+  // Chica: angosta y hacia el centro, solapándose un poco con la otra (como la escalera de
+  // las grandes, pero sin quedar separadas a los bordes)
+  chica: {
+    izquierda: "col-span-16 col-start-1 lg:col-span-9 lg:col-start-5",
+    derecha: "col-span-16 col-start-9 lg:col-span-9 lg:col-start-12",
+  },
+};
+
+// Grilla de imágenes. Cada item es una URL o un objeto de ancha(), tercio(), escalonada(),
+// centrada() o conSonido() (ver proyectos.js).
+//   - Si alguna viene marcada (ancha/tercio/escalonada): las anchas van a todo el ancho, los
+//     tercios de a tres, las escalonadas van cada una en su fila a un lado y el resto de a dos.
 //   - Si no: la primera va a todo el ancho y el resto de a dos (si sobra una al final,
 //     también va a todo el ancho).
 //   - Con unaPorFila, todas van a todo el ancho.
 function Galeria({ imagenes, titulo, unaPorFila = false }) {
   if (!imagenes.length) return null;
   const items = imagenes.map((img) => (typeof img === "string" ? { src: img } : img));
-  const manual = items.some((img) => img.ancha || img.tercio);
+  const manual = items.some((img) => img.ancha || img.tercio || img.escalonada);
   const sueltaAlFinal = (items.length - 1) % 2 === 1;
   return (
     <div className="grid grid-cols-24 items-start gap-2.5 md:gap-5">
       {items.map((item, i) => {
-        const { src, ancha, centrada, tercio, controles, alt } = item;
+        const { src, ancha, centrada, tercio, escalonada, tamaño, controles, alt } = item;
         let ancho = "col-span-12";
         if (unaPorFila || (manual ? ancha : i === 0 || (sueltaAlFinal && i === items.length - 1))) {
           ancho = "col-span-24";
         } else if (tercio) {
           ancho = "col-span-8";
         }
+        const media = (
+          <Media src={src} alt={alt ?? `${titulo} – imagen ${i + 1}`} controles={controles} />
+        );
+
+        // Escalonada: ocupa una fila entera (así la siguiente baja) y adentro, con la misma
+        // grilla, se ubica a su lado
+        if (escalonada) {
+          return (
+            <div key={src} className="col-span-24 grid grid-cols-24 gap-2.5 md:gap-5">
+              <div className={ESCALONADA[tamaño][escalonada]}>{media}</div>
+            </div>
+          );
+        }
+
         return (
           <div
             key={src}
@@ -67,7 +95,7 @@ function Galeria({ imagenes, titulo, unaPorFila = false }) {
               centrada ? "flex justify-center py-12 lg:py-20 [&_img]:w-20 lg:[&_img]:w-28" : ""
             }`}
           >
-            <Media src={src} alt={alt ?? `${titulo} – imagen ${i + 1}`} controles={controles} />
+            {media}
           </div>
         );
       })}

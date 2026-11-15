@@ -42,7 +42,8 @@ function Header() {
         />
       </TransitionLink>
 
-      <TransitionLink to="/proyectos" className="text-sm xl:text-base font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
+      {/* Lleva a la sección "Proyectos Seleccionados" de la home */}
+      <TransitionLink to="/#proyectos" className="text-sm xl:text-base font-bold uppercase text-black transition-colors duration-300 hover:text-rojo">
         PROYECTOS
       </TransitionLink>
     </header>

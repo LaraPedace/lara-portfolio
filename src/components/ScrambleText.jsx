@@ -19,7 +19,9 @@ function random(list) {
 // Cada carácter random se dibuja encima de la letra real (invisible), así el texto
 // ocupa siempre el mismo lugar y las líneas no saltan.
 // - animar: si es false, el texto aparece directo, sin efecto.
-function ScrambleText({ text, offset = 0, className = "", animar = true }) {
+// - alVer: si es true, el efecto arranca recién cuando el texto entra en pantalla
+//   (hasta entonces no se ve). Pasa una sola vez.
+function ScrambleText({ text, offset = 0, className = "", animar = true, alVer = false }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -39,42 +41,64 @@ function ScrambleText({ text, offset = 0, className = "", animar = true }) {
       return;
     }
 
-    const resolveAt = letters.map(
-      (_, i) => SCRAMBLE_MS + (offset + i) * STEP_MS + Math.random() * JITTER_MS,
-    );
-    const end = Math.max(...resolveAt);
-    const pending = new Set(letters.keys());
-    const start = performance.now();
-    let last = -Infinity;
     let frame;
+    let observer;
 
-    function shuffle(letter) {
-      letter.fake.textContent = random(CHARS);
-      letter.fake.style.opacity = random(LEVELS);
-    }
+    function empezar() {
+      const resolveAt = letters.map(
+        (_, i) => SCRAMBLE_MS + (offset + i) * STEP_MS + Math.random() * JITTER_MS,
+      );
+      const end = Math.max(...resolveAt);
+      const pending = new Set(letters.keys());
+      const start = performance.now();
+      let last = -Infinity;
 
-    letters.forEach(shuffle);
+      function shuffle(letter) {
+        letter.fake.textContent = random(CHARS);
+        letter.fake.style.opacity = random(LEVELS);
+      }
 
-    function tick(now) {
-      const t = now - start;
-      if (now - last >= EVERY_MS) {
-        last = now;
-        for (const i of pending) {
-          if (t >= resolveAt[i]) {
-            reveal(letters[i]);
-            pending.delete(i);
-          } else if (Math.random() < 0.6) {
-            shuffle(letters[i]);
+      letters.forEach(shuffle);
+
+      function tick(now) {
+        const t = now - start;
+        if (now - last >= EVERY_MS) {
+          last = now;
+          for (const i of pending) {
+            if (t >= resolveAt[i]) {
+              reveal(letters[i]);
+              pending.delete(i);
+            } else if (Math.random() < 0.6) {
+              shuffle(letters[i]);
+            }
           }
         }
+        if (t < end + EVERY_MS) frame = requestAnimationFrame(tick);
+        else letters.forEach(reveal); // por las dudas, que quede todo escrito
       }
-      if (t < end + EVERY_MS) frame = requestAnimationFrame(tick);
-      else letters.forEach(reveal); // por las dudas, que quede todo escrito
+      frame = requestAnimationFrame(tick);
     }
-    frame = requestAnimationFrame(tick);
 
-    return () => cancelAnimationFrame(frame);
-  }, [text, offset, animar]);
+    if (alVer) {
+      // Arranca cuando se ve al menos la mitad del texto
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          observer.disconnect();
+          empezar();
+        },
+        { threshold: 0.5 },
+      );
+      observer.observe(ref.current);
+    } else {
+      empezar();
+    }
+
+    return () => {
+      observer?.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [text, offset, animar, alVer]);
 
   const words = text.split(" ");
 

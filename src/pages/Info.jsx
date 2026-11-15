@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
 import foto from "../assets/img/foto_lari.webp";
 import ScrambleText from "../components/ScrambleText.jsx";
 import PhotoScramble from "../components/PhotoScramble.jsx";
+import "./Info.css";
 
 const PRESENTACION =
   "Soy Lara Pedace, diseñadora multidisciplinaria con base en Buenos Aires, Argentina.";
@@ -16,8 +18,29 @@ const FRASE =
   "Entiendo el diseño como una forma de expresión que invita a pensar, explorar y transformar ideas en experiencias significativas y sensaciones duraderas.";
 
 function Info() {
+  const mainRef = useRef(null);
+
+  // Aparición al scrollear: cada elemento con data-aparece se muestra (fundido + sube un
+  // poquito) cuando entra en pantalla. Una sola vez. --i = orden, para que aparezcan
+  // escalonados (ver Info.css).
+  useEffect(() => {
+    const elementos = mainRef.current.querySelectorAll("[data-aparece]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px" },
+    );
+    elementos.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <main className="grid grid-cols-2 gap-x-5 bg-white px-4 pt-40 pb-20 text-black tracking-tight xl:grid-cols-12 xl:px-8 xl:pt-40 xl:pb-40">
+    <main ref={mainRef} className="grid grid-cols-2 gap-x-5 bg-white px-4 pt-40 pb-20 text-black tracking-tight xl:grid-cols-12 xl:px-8 xl:pt-40 xl:pb-40">
       {/* Presentación */}
       <h1 className="order-3 col-span-2 mt-8 text-3xl leading-tight tracking-tighter font-bold xl:order-0 xl:col-span-8 xl:col-start-4 xl:mt-0 xl:text-lead">
         <ScrambleText text={PRESENTACION} />
@@ -36,13 +59,13 @@ function Info() {
       />
 
       <div className="order-4 col-span-2 mt-7.75 text-xl xl:order-0 xl:col-span-6 xl:mt-25 xl:text-2xl">
-        <p>
+        <p data-aparece className="aparece">
           <span className="xl:hidden">{FRASE} </span>
           Cada proyecto nace de un concepto que le da sentido, pero es en el proceso, entre
           preguntas, pruebas y hallazgos, donde encuentro su mayor valor. Me interesa explorar el
           limbo entre lo físico y lo digital.
         </p>
-        <p className="mt-[1.3em]">
+        <p data-aparece className="aparece mt-[1.3em]" style={{ "--i": 1 }}>
           Me gradué en 2024 en la Licenciatura en Diseño de la Universidad Torcuato Di Tella.
           Actualmente estoy trabajando para una agencia creativa y en paralelo, desarrollando
           proyectos freelance.
@@ -50,7 +73,7 @@ function Info() {
       </div>
 
       {/* Softwares */}
-      <h2 className="order-5 col-span-2 mt-7.75 text-sm leading-tight font-bold uppercase xl:order-0 xl:col-span-1 xl:col-start-6 xl:mt-18 xl:text-label">
+      <h2 data-aparece className="aparece order-5 col-span-2 mt-7.75 text-sm leading-tight font-bold uppercase xl:order-0 xl:col-span-1 xl:col-start-6 xl:mt-18 xl:text-label">
         Softwares
       </h2>
 
@@ -59,8 +82,10 @@ function Info() {
           key={i}
           className="order-6 mt-7.75 text-lg leading-tight xl:order-0 xl:col-span-2 xl:mt-18"
         >
-          {lista.map((item) => (
-            <li key={item}>{item}</li>
+          {lista.map((item, j) => (
+            <li key={item} data-aparece className="aparece" style={{ "--i": j + 1 }}>
+              {item}
+            </li>
           ))}
         </ul>
       ))}

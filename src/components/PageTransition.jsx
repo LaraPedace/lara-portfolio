@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLenis } from "lenis/react";
 import { TransitionContext, usePageTransition } from "./pageTransitionContext.js";
+import { scrollAlAncla } from "./scrollAlAncla.js";
 
 // Transición entre páginas: la misma cortina roja del Laboratorio ("page wipe").
 // 1. Entra desde la izquierda y cubre la pantalla (0.4s).
@@ -23,6 +24,16 @@ export function PageTransitionProvider({ children }) {
 
   async function navegar(to) {
     if (enCurso.current) return;
+
+    // Links con ancla (ej. "/#proyectos"): ruta + sección
+    const [ruta, ancla] = to.split("#");
+    const hash = ancla ? `#${ancla}` : "";
+
+    // Ancla en la misma página: no hay transición, baja suave hasta la sección
+    if (hash && (ruta || pathname) === pathname) {
+      scrollAlAncla(hash, lenis);
+      return;
+    }
 
     // Misma página: no hay transición, solo vuelve arriba
     if (to === pathname) {
@@ -55,12 +66,15 @@ export function PageTransitionProvider({ children }) {
         opciones,
       ).finished;
 
-      // 2. Con la pantalla toda roja: cambia la página, vuelve arriba (y la cortina con ella,
-      //    en el mismo cuadro) y espera a que la página nueva se dibuje
+      // 2. Con la pantalla toda roja: cambia la página, salta arriba de todo (o a la
+      //    sección del ancla) con la cortina en el mismo lugar, y espera a que la página
+      //    nueva se dibuje
       flushSync(() => navigate(to));
-      if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
-      else window.scrollTo(0, 0);
-      capa.style.top = "0px";
+      if (!scrollAlAncla(hash, lenis, true)) {
+        if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+        else window.scrollTo(0, 0);
+      }
+      capa.style.top = `${window.scrollY}px`;
       await nextFrame();
       await nextFrame();
 

@@ -8,6 +8,8 @@ import Footer from './components/Footer.jsx'
 import Home from './pages/Home.jsx'
 import Info from './pages/Info.jsx'
 import { PageTransitionProvider } from './components/PageTransition.jsx'
+import { scrollAlAncla } from './components/scrollAlAncla.js'
+import Preloader from './components/Preloader.jsx'
 
 // Si la persona pidió menos animaciones en su sistema, el scroll queda normal
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -18,7 +20,11 @@ function ScrollToTop() {
   const lenis = useLenis()
 
   useEffect(() => {
-    if (hash) return
+    // Con #ancla (ej. al abrir directo /#proyectos): va a esa sección
+    if (hash) {
+      scrollAlAncla(hash, lenis, true)
+      return
+    }
     // Con Lenis hay que scrollear a través de él; si no, Lenis "pelea" con el salto
     if (lenis) lenis.scrollTo(0, { immediate: true })
     else window.scrollTo(0, 0)
@@ -40,6 +46,8 @@ const App = () => {
             <Route path="/info" element={<Info />} />
           </Routes>
           <Footer />
+          {/* Va al final: así, cuando arranca, la página ya está armada y puede seguir su carga */}
+          <Preloader />
         </PageTransitionProvider>
       </BrowserRouter>
     </ReactLenis>

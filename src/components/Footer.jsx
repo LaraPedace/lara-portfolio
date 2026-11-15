@@ -1,4 +1,5 @@
 import star from "../assets/img/STAR-ROJA.svg";
+import ScrambleText from "./ScrambleText.jsx";
 
 // Links de contacto (completar las URLs de Instagram y LinkedIn)
 const LINKS = [
@@ -11,13 +12,18 @@ function Footer() {
   return (
     <footer
       id="contacto"
-      className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-1 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-12.25"
+      className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-1 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-4"
     >
       <div className="flex flex-col md:flex-row md:justify-between leading-none">
         {/* Título */}
         <div className="flex flex-col gap-0 tracking-tighter text-display-sm md:text-display leading-none">
-          <h2>Trabajemos</h2>
-          <h2>En conjunto</h2>
+          {/* Caracteres random en rojo que se escriben al llegar al footer (como en Sobre mí) */}
+          <h2>
+            <ScrambleText text="Trabajemos" alVer />
+          </h2>
+          <h2>
+            <ScrambleText text="En conjunto" offset={10} alVer />
+          </h2>
         </div>
 
         {/* Contacto */}
@@ -60,7 +66,7 @@ function Footer() {
           className="mb-7.25 h-56.25 w-49.5 self-end transition-transform duration-700 ease-out hover:rotate-180 motion-reduce:transition-none md:mb-0 md:h-25.25 md:w-22.25 md:self-auto"
         />
 
-        <div className="flex justify-between text-xs tracking-wide leading-normal md:w-98">
+        <div className="flex justify-between text-xs tracking-tight leading-normal md:w-98">
           <p>
             Website by{" "}
             <a

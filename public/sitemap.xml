@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.larapedace.com/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/info</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/universo</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/microdesastre</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/casa-morrillo</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/cumbia-del-olvido</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/desa</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.larapedace.com/proyectos/galo</loc>
+    <priority>0.9</priority>
+  </url>
+</urlset>

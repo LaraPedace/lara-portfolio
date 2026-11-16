@@ -6,6 +6,7 @@ import { TransitionLink } from "../components/PageTransition.jsx";
 import { scrollAlAncla } from "../components/scrollAlAncla.js";
 import Botonera from "../components/Botonera.jsx";
 import NoEncontrada from "./NoEncontrada.jsx";
+import { useSeo } from "../components/useSeo.js";
 
 const esVideo = (src) => /\.(mp4|webm)$/i.test(src);
 const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -137,6 +138,10 @@ function Proyecto() {
   const lenis = useLenis();
   const indice = proyectos.findIndex((p) => p.id === id);
   const proyecto = proyectos[indice];
+  useSeo({
+    titulo: proyecto ? `${proyecto.titulo}, ${proyecto.categoria}` : null,
+    descripcion: proyecto?.descripcion,
+  });
   // Secciones con ancla. Las que comparten "grupo" llevan número (1, 2, 3…) y la primera
   // de cada grupo muestra el título del grupo arriba.
   const secciones = (proyecto?.secciones ?? []).map((s, i, todas) => {

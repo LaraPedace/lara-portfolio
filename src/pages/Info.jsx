@@ -3,6 +3,7 @@ import foto from "../assets/img/foto_lari.webp";
 import cv from "../assets/CV-LaraPedace.pdf";
 import ScrambleText from "../components/ScrambleText.jsx";
 import PhotoScramble from "../components/PhotoScramble.jsx";
+import { useSeo } from "../components/useSeo.js";
 import "./Info.css";
 
 const PRESENTACION =
@@ -20,6 +21,11 @@ const FRASE =
 
 function Info() {
   const mainRef = useRef(null);
+  useSeo({
+    titulo: "Sobre mí",
+    descripcion:
+      "Lara Pedace, diseñadora multidisciplinaria con base en Buenos Aires. Licenciada en Diseño por la Universidad Torcuato Di Tella. Softwares, trayectoria y CV.",
+  });
 
   // Aparición al scrollear: cada elemento con data-aparece se muestra (fundido + sube un
   // poquito) cuando entra en pantalla. Una sola vez. --i = orden, para que aparezcan

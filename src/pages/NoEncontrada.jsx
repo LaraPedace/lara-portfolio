@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { TransitionLink } from "../components/PageTransition.jsx";
 import { animarLogo } from "../components/logoCaracteres.js";
+import { useSeo } from "../components/useSeo.js";
 import "../components/Hero.css";
 
 // Dibujo del 404, con el mismo trazo que el LARA del Hero (palos de 7, barras de 4, 22 filas)
@@ -32,6 +33,7 @@ const MASK_404 = [
 // Página 404: el "404" armado con caracteres como el LARA de la home, pero en rojo.
 // También se muestra cuando el proyecto de /proyectos/:id no existe.
 function NoEncontrada() {
+  useSeo({ titulo: "Página no encontrada", noindex: true });
   const sectionRef = useRef(null);
   const logoRef = useRef(null);
   const dustRef = useRef(null);

@@ -106,7 +106,10 @@ function ScrambleText({ text, offset = 0, className = "", animar = true, alVer =
     <span ref={ref} className={className}>
       {/* Texto real para lectores de pantalla; lo visual se oculta */}
       <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
+      {/* key={text}: si cambia el texto (ej. al cambiar de idioma) las letras se arman de
+          nuevo, ocultas. Sin esto React reusaba las anteriores, que ya estaban visibles, y
+          quedaban encima de los caracteres rojos del efecto. */}
+      <span key={text} aria-hidden="true">
         {words.map((word, w) => (
           <span key={w}>
             <span className="whitespace-nowrap">

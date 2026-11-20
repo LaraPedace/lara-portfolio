@@ -90,7 +90,7 @@ function Preloader() {
     let destino;
     function medir() {
       const alto = fondoRef.current.clientHeight;
-      const header = document.querySelector('header a[aria-label="Inicio"] > span');
+      const header = document.querySelector('header a[href="/"] > span');
       if (!header) {
         destino = { x: window.innerWidth / 2, y: 40, ancho: 32, alto: 36, giro: "", pantalla: alto };
         return;

@@ -3,6 +3,9 @@ import { flushSync } from "react-dom";
 import { useLenis } from "lenis/react";
 import { lab } from "../data/lab.js";
 import { usePageTransition } from "./pageTransitionContext.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { useDescripcionLab } from "../i18n/traducir.js";
+import { T } from "../i18n/textos.js";
 import "./Laboratorio.css";
 
 // ─── Ajustes ───────────────────────────────────────────────────────────────
@@ -76,6 +79,8 @@ function Laboratorio() {
   const [abierta, setAbierta] = useState(null); // pieza abierta en grande
   const lenis = useLenis();
   const navegar = usePageTransition();
+  const { t } = useIdioma();
+  const descripcion = useDescripcionLab();
   const cortinaRef = useRef(null);
   const enTransicion = useRef(false);
 
@@ -366,7 +371,7 @@ function Laboratorio() {
               data-pieza
               onClick={() => abrir(item)}
               onPointerEnter={(e) => e.pointerType === "mouse" && tick()}
-              aria-label={item.descripcion}
+              aria-label={descripcion(item.descripcion)}
               className={`lab-pieza group absolute top-0 left-0 cursor-star will-change-transform hover:z-40 ${
                 ["z-0", "z-10", "z-20"][capa]
               }`}
@@ -392,7 +397,7 @@ function Laboratorio() {
                 )}
               </span>
               <span className="pointer-events-none absolute top-full left-0 w-max max-w-60 pt-4 text-left text-sm leading-tight tracking-tighter text-rojo opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                {item.descripcion}
+                {descripcion(item.descripcion)}
               </span>
             </button>
           ))}
@@ -401,7 +406,7 @@ function Laboratorio() {
         {/* Título fijo a la izquierda + botón entrar / salir */}
         <div className="pointer-events-none absolute top-1/2 left-4 z-50 -translate-y-1/2 xl:left-8">
           <h2 className="max-w-[6em] text-5xl leading-none font-medium tracking-tighter xl:text-6xl">
-            El Laboratorio de Lara
+            {t(T.laboratorio)}
           </h2>
           <button
             type="button"
@@ -409,7 +414,7 @@ function Laboratorio() {
             className={`pointer-events-auto mt-4 ${boton}`}
           >
             <span aria-hidden="true">{inmersivo ? "← " : "→ "}</span>
-            {inmersivo ? "Salir" : "Entrar"}
+            {inmersivo ? t(T.salir) : t(T.entrar)}
           </button>
         </div>
       </div>
@@ -419,7 +424,7 @@ function Laboratorio() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={abierta.descripcion}
+          aria-label={descripcion(abierta.descripcion)}
           onClick={() => setAbierta(null)}
           className="fixed inset-0 z-70 flex animate-fade-in flex-col items-center justify-center gap-4 bg-white/95 p-4 [animation-delay:0s] [animation-duration:300ms]"
         >
@@ -430,7 +435,7 @@ function Laboratorio() {
             // tocable y el margen negativo lo compensa para que el texto quede alineado.
             className={`absolute top-5 right-4 -m-3 p-3 xl:right-8 ${boton}`}
           >
-            Cerrar <span aria-hidden="true">×</span>
+            {t(T.cerrar)} <span aria-hidden="true">×</span>
           </button>
           {abierta.tipo === "video" ? (
             <video
@@ -445,12 +450,12 @@ function Laboratorio() {
           ) : (
             <img
               src={abierta.src}
-              alt={abierta.descripcion}
+              alt={descripcion(abierta.descripcion)}
               onClick={(e) => e.stopPropagation()}
               className="max-h-[80svh] max-w-full object-contain"
             />
           )}
-          <p className="text-lg tracking-tighter">{abierta.descripcion}</p>
+          <p className="text-lg tracking-tighter">{descripcion(abierta.descripcion)}</p>
         </div>
       )}
 

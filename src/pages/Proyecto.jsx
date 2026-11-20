@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLenis } from "lenis/react";
-import { proyectos } from "../data/proyectos.js";
+import { proyectos as proyectosEs } from "../data/proyectos.js";
+import { useProyectos } from "../i18n/traducir.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 import { TransitionLink } from "../components/PageTransition.jsx";
 import { scrollAlAncla } from "../components/scrollAlAncla.js";
 import Botonera from "../components/Botonera.jsx";
@@ -62,6 +65,7 @@ const ESCALONADA = {
 //     también va a todo el ancho).
 //   - Con unaPorFila, todas van a todo el ancho.
 function Galeria({ imagenes, titulo, unaPorFila = false }) {
+  const { t } = useIdioma();
   if (!imagenes.length) return null;
   const items = imagenes.map((img) => (typeof img === "string" ? { src: img } : img));
   const manual = items.some((img) => img.ancha || img.tercio || img.escalonada);
@@ -77,7 +81,7 @@ function Galeria({ imagenes, titulo, unaPorFila = false }) {
           ancho = "col-span-8";
         }
         const media = (
-          <Media src={src} alt={alt ?? `${titulo} – imagen ${i + 1}`} controles={controles} />
+          <Media src={src} alt={alt ?? `${titulo} – ${t(T.imagen)} ${i + 1}`} controles={controles} />
         );
 
         // Escalonada: ocupa una fila entera (así la siguiente baja) y adentro, con la misma
@@ -136,8 +140,11 @@ function Dato({ label, children }) {
 function Proyecto() {
   const { id } = useParams();
   const lenis = useLenis();
+  const { t } = useIdioma();
+  const proyectos = useProyectos();
   const indice = proyectos.findIndex((p) => p.id === id);
   const proyecto = proyectos[indice];
+  const seccionesEs = proyectosEs[indice]?.secciones ?? [];
   useSeo({
     titulo: proyecto ? `${proyecto.titulo}, ${proyecto.categoria}` : null,
     descripcion: proyecto?.descripcion,
@@ -151,7 +158,7 @@ function Proyecto() {
     if (s.grupo) {
       for (let j = i; j >= 0 && todas[j].grupo === s.grupo; j--) numero++;
     }
-    return { ...s, ancla: slug(s.titulo), abreGrupo, numero };
+    return { ...s, ancla: slug(seccionesEs[i]?.titulo ?? s.titulo), abreGrupo, numero };
   });
   const [visible, setActiva] = useState(null);
   // Si la sección vista es de otro proyecto (al pasar al siguiente), vale la primera
@@ -194,7 +201,7 @@ function Proyecto() {
                 className="text-eyebrow uppercase text-white/60 transition-colors duration-300 hover:text-rojo lg:text-franja-label"
               >
                 <span aria-hidden="true">← </span>
-                Volver
+                {t(T.volver)}
               </TransitionLink>
               <h1 className="text-5xl leading-[1.05] tracking-tighter lg:text-franja-title">
                 {proyecto.titulo}
@@ -206,28 +213,28 @@ function Proyecto() {
           </div>
 
           <div className="flex flex-col gap-4 lg:gap-franja-sm">
-            <h2 className="text-sm uppercase text-white/40 lg:text-franja-label">Sobre el proyecto</h2>
+            <h2 className="text-sm uppercase text-white/40 lg:text-franja-label">{t(T.sobreElProyecto)}</h2>
             <p className="text-xl  max-lg:leading-snug tracking-tighter lg:text-franja-body">
               {proyecto.sobreElProyecto}
             </p>
           </div>
 
           <dl className="grid grid-cols-2 gap-x-5 gap-y-6 tracking-tighter lg:gap-y-franja">
-            <Dato label="Tipo de proyecto">{proyecto.tipo}</Dato>
-            <Dato label="Año">{proyecto.anio}</Dato>
-            <Dato label={proyecto.disciplinas.length > 1 ? "Disciplinas" : "Disciplina"}>
+            <Dato label={t(T.tipoDeProyecto)}>{proyecto.tipo}</Dato>
+            <Dato label={t(T.anio)}>{proyecto.anio}</Dato>
+            <Dato label={t(proyecto.disciplinas.length > 1 ? T.disciplinas : T.disciplina)}>
               {proyecto.disciplinas.map((d) => (
                 <span key={d} className="block">
                   {d}
                 </span>
               ))}
             </Dato>
-            {proyecto.colaboracion && <Dato label="Colaboración">{proyecto.colaboracion}</Dato>}
+            {proyecto.colaboracion && <Dato label={t(T.colaboracion)}>{proyecto.colaboracion}</Dato>}
           </dl>
 
           {/* Índice de secciones: solo en desktop */}
           {secciones.length > 0 && (
-            <nav aria-label="Secciones del proyecto" className="hidden lg:block">
+            <nav aria-label={t(T.seccionesDelProyecto)} className="hidden lg:block">
               <ul className="flex flex-col gap-franja-sm text-franja-meta leading-[1.3] tracking-tighter lg:mt-franja">
                 {secciones.map((s) => {
                   const esActiva = activa === s.ancla;
@@ -328,7 +335,7 @@ function Proyecto() {
         className="flex flex-col items-center gap-3 px-4 py-24 text-center tracking-tighter transition-colors duration-300 hover:text-rojo lg:py-52 xl:px-8"
       >
         <span className="text-5xl leading-[1.05] tracking-tighter lg:text-9xl">{siguiente.titulo}</span>
-        <span className="text-base uppercase lg:text-lg">Siguiente proyecto →</span>
+        <span className="text-base uppercase lg:text-lg">{t(T.siguienteProyecto)} →</span>
       </TransitionLink>
     </main>
   );

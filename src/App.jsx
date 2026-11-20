@@ -12,6 +12,7 @@ import NoEncontrada from './pages/NoEncontrada.jsx'
 import { PageTransitionProvider } from './components/PageTransition.jsx'
 import { scrollAlAncla } from './components/scrollAlAncla.js'
 import Preloader from './components/Preloader.jsx'
+import { IdiomaProvider, SelectorIdioma } from './i18n/Idioma.jsx'
 
 // Si la persona pidió menos animaciones en su sistema, el scroll queda normal
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -37,6 +38,7 @@ function ScrollToTop() {
 
 const App = () => {
   return (
+    <IdiomaProvider>
     <ReactLenis root options={{ smoothWheel: !reduceMotion }}>
       <BrowserRouter>
         {/* Cortina roja entre páginas: los links usan <TransitionLink> */}
@@ -50,11 +52,14 @@ const App = () => {
             <Route path="*" element={<NoEncontrada />} />
           </Routes>
           <Footer />
+          {/* Botón ESP | ENG, fijo abajo a la derecha */}
+          <SelectorIdioma />
           {/* Va al final: así, cuando arranca, la página ya está armada y puede seguir su carga */}
           <Preloader />
         </PageTransitionProvider>
       </BrowserRouter>
     </ReactLenis>
+    </IdiomaProvider>
   )
 }
 

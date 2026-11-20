@@ -3,6 +3,8 @@ import ScrambleText from "./ScrambleText.jsx";
 import star from "../assets/img/STAR.svg";
 import { esperarPreloader, preloaderActivo } from "./preloaderEstado.js";
 import { animarLogo } from "./logoCaracteres.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 import "./Hero.css";
 
 // "Scroll ↓" hace el efecto de caracteres random solo la primera vez que carga la página.
@@ -102,6 +104,7 @@ const MOVIL_MQ = "(max-width: 767px)"; // igual que md en Tailwind
 
 function Hero() {
   const laraRef = useRef(null);
+  const { t } = useIdioma();
   const dustRef = useRef(null);
   const sectionRef = useRef(null);
   const stageRef = useRef(null);
@@ -213,9 +216,9 @@ function Hero() {
           Desktop: todo el texto junto, centrado encima del logo (ver .hero-contenido en Hero.css) */}
       <div className="hero-contenido font-grotesk">
         <p ref={saludoRef} className="hero-saludo text-hero-sm font-bold md:text-3xl">
-          Hola,
+          {t(T.hola)}
           <br />
-          Soy Diseñadora Integral
+          {t(T.soyDisenadora)}
         </p>
         <div ref={stageRef} className="hero-stage relative">
           <h1 ref={laraRef} className="hero-lara" aria-label="Lara"></h1>

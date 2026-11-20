@@ -4,28 +4,24 @@ import cv from "../assets/CV-LaraPedace.pdf";
 import ScrambleText from "../components/ScrambleText.jsx";
 import PhotoScramble from "../components/PhotoScramble.jsx";
 import { useSeo } from "../components/useSeo.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 import "./Info.css";
-
-const PRESENTACION =
-  "Soy Lara Pedace, diseñadora multidisciplinaria con base en Buenos Aires, Argentina.";
 
 const SOFTWARES = [
   ["Illustrator", "Photoshop", "After Effects", "Figma", "Visual Studio Code"],
   ["Resolume Arena", "Reaper", "Fusion 360", "Blender", "TouchDesigner"],
 ];
 
-// En desktop esta frase va en negrita junto a la presentación;
-// en móvil pasa a ser el comienzo del texto "sobre mí".
-const FRASE =
-  "Entiendo el diseño como una forma de expresión que invita a pensar, explorar y transformar ideas en experiencias significativas y sensaciones duraderas.";
+// Los textos (español e inglés) están en src/i18n/textos.js. La "frase" en desktop va en
+// negrita junto a la presentación; en móvil pasa a ser el comienzo del texto "sobre mí".
 
 function Info() {
   const mainRef = useRef(null);
-  useSeo({
-    titulo: "Sobre mí",
-    descripcion:
-      "Lara Pedace, diseñadora multidisciplinaria con base en Buenos Aires. Licenciada en Diseño por la Universidad Torcuato Di Tella. Softwares, trayectoria y CV.",
-  });
+  const { t } = useIdioma();
+  const PRESENTACION = t(T.presentacion);
+  const FRASE = t(T.frase);
+  useSeo({ titulo: t(T.sobreMiTitulo), descripcion: t(T.seoInfo) });
 
   // Aparición al scrollear: cada elemento con data-aparece se muestra (fundido + sube un
   // poquito) cuando entra en pantalla. Una sola vez. --i = orden, para que aparezcan
@@ -56,32 +52,28 @@ function Info() {
 
       {/* Sobre mí */}
       <h2 className="order-2 animate-fade-in text-sm leading-normal font-bold uppercase motion-reduce:animate-none xl:order-0 xl:col-span-1 xl:col-start-4 xl:mt-25 xl:text-label">
-        Sobre mí
+        {t(T.sobreMiTitulo)}
       </h2>
 
       <PhotoScramble
         src={foto}
-        alt="Retrato de Lara Pedace"
+        alt={t(T.retrato)}
         className="order-1 animate-fade-in motion-reduce:animate-none aspect-portrait w-full xl:order-0 xl:col-span-2 xl:col-start-6 xl:mt-25"
       />
 
       <div className="order-4 col-span-2 mt-7.75 text-xl xl:order-0 xl:col-span-6 xl:mt-25 xl:text-2xl">
         <p data-aparece className="aparece">
           <span className="xl:hidden">{FRASE} </span>
-          Cada proyecto nace de un concepto que le da sentido, pero es en el proceso, entre
-          preguntas, pruebas y hallazgos, donde encuentro su mayor valor. Me interesa explorar el
-          limbo entre lo físico y lo digital.
+          {t(T.sobreMiTexto1)}
         </p>
         <p data-aparece className="aparece mt-[1.3em]" style={{ "--i": 1 }}>
-          Me gradué en 2024 en la Licenciatura en Diseño de la Universidad Torcuato Di Tella.
-          Actualmente estoy trabajando para una agencia creativa y en paralelo, desarrollando
-          proyectos freelance.
+          {t(T.sobreMiTexto2)}
         </p>
       </div>
 
       {/* Softwares */}
       <h2 data-aparece className="aparece order-5 col-span-2 mt-7.75 text-sm leading-tight font-bold uppercase xl:order-0 xl:col-span-1 xl:col-start-6 xl:mt-18 xl:text-label">
-        Softwares
+        {t(T.softwares)}
       </h2>
 
       {SOFTWARES.map((lista, i) => (
@@ -104,7 +96,7 @@ function Info() {
         data-aparece
         className="aparece order-7 col-span-2 mt-12 w-fit text-sm leading-tight font-bold uppercase transition-colors duration-300 hover:text-rojo xl:order-0 xl:col-span-2 xl:col-start-6 xl:mt-14 xl:text-label"
       >
-        Descargar CV <span aria-hidden="true">↓</span>
+        {t(T.descargarCv)} <span aria-hidden="true">↓</span>
       </a>
     </main>
   );

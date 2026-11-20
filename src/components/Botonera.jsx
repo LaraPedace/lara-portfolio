@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 
 const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const FADE_MS = 250; // duración del fundido al cambiar de botón
@@ -8,6 +10,7 @@ const FADE_MS = 250; // duración del fundido al cambiar de botón
 // su descripción y lo que muestra el monitor.
 // estados = [{ etiqueta, nombre, subtitulo, icono, sensor, texto, video, monitor }]
 function Botonera({ estados }) {
+  const { t } = useIdioma();
   const [elegido, setElegido] = useState(0); // botón marcado (cambia al instante)
   const [mostrado, setMostrado] = useState(0); // contenido en pantalla (cambia con el fundido)
   const [visible, setVisible] = useState(true);
@@ -35,7 +38,7 @@ function Botonera({ estados }) {
   return (
     <div className="flex flex-col gap-10 tracking-tighter lg:gap-14">
       {/* Botones */}
-      <div role="group" aria-label="Botones de la instalación" className="grid grid-cols-2 gap-2.5 md:gap-5 lg:grid-cols-4">
+      <div role="group" aria-label={t(T.botonesInstalacion)} className="grid grid-cols-2 gap-2.5 md:gap-5 lg:grid-cols-4">
         {estados.map((e, i) => {
           const activo = i === elegido;
           return (
@@ -69,7 +72,7 @@ function Botonera({ estados }) {
           <video
             key={actual.video}
             src={actual.video}
-            aria-label={`Sala: ${actual.nombre}`}
+            aria-label={`${t(T.sala)}: ${actual.nombre}`}
             autoPlay={!reducirMovimiento}
             muted
             loop
@@ -85,11 +88,11 @@ function Botonera({ estados }) {
             </div>
             <p className="text-xl leading-tight">{actual.texto}</p>
             <div className="flex flex-col gap-3">
-              <span className="text-sm leading-none uppercase">Monitor</span>
+              <span className="text-sm leading-none uppercase">{t(T.monitor)}</span>
               <video
                 key={actual.monitor}
                 src={actual.monitor}
-                aria-label={`Monitor: ${actual.nombre}`}
+                aria-label={`${t(T.monitor)}: ${actual.nombre}`}
                 autoPlay={!reducirMovimiento}
                 muted
                 loop

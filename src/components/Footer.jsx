@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import star from "../assets/img/STAR-ROJA.svg";
 import ScrambleText from "./ScrambleText.jsx";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 
 // Links de contacto
 const LINKS = [
@@ -11,6 +13,8 @@ const LINKS = [
 
 function Footer() {
   const footerRef = useRef(null);
+  const { t } = useIdioma();
+  const trabajemos = t(T.trabajemos);
 
   // Safari de iPhone: mientras el footer (negro) se ve, el fondo del html pasa a negro,
   // así la barra de abajo y el rebote del scroll no muestran una franja blanca.
@@ -31,17 +35,17 @@ function Footer() {
     <footer
       ref={footerRef}
       id="contacto"
-      className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-1 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-4"
+      className="relative flex min-h-148.5 flex-col bg-black px-4 pt-6.25 pb-12 font-grotesk uppercase text-white xl:px-8 md:pt-9.25 md:pb-14"
     >
       <div className="flex flex-col md:flex-row md:justify-between leading-none">
         {/* Título */}
         <div className="flex flex-col gap-0 tracking-tighter text-display-sm md:text-display leading-none">
           {/* Caracteres random en rojo que se escriben al llegar al footer (como en Sobre mí) */}
           <h2>
-            <ScrambleText text="Trabajemos" alVer />
+            <ScrambleText text={trabajemos} alVer />
           </h2>
           <h2>
-            <ScrambleText text="En conjunto" offset={10} alVer />
+            <ScrambleText text={t(T.enConjunto)} offset={trabajemos.length} alVer />
           </h2>
         </div>
 
@@ -64,7 +68,7 @@ function Footer() {
           <p className="text-right leading-normal md:whitespace-nowrap">Buenos Aires, Argentina</p>
 
           <p className="col-span-2 mt-6 leading-tight">
-            Nuevos proyectos
+            {t(T.nuevosProyectos)}
             <br />
             <a
               href="mailto:larapedace@gmail.com"

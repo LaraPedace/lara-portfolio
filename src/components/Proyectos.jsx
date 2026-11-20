@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { proyectos } from "../data/proyectos.js";
+import { useProyectos } from "../i18n/traducir.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 import { TransitionLink } from "./PageTransition.jsx";
 import "./Proyectos.css";
 
 const VISTAS = ["lista", "grilla"];
+const NOMBRE_VISTA = { lista: T.vistaLista, grilla: T.vistaGrilla };
 const FADE_MS = 250; // duración del fundido al cambiar de vista
 
 // La preview puede ser una imagen o un video (.mp4/.webm): el video va mudo y en loop
@@ -17,6 +20,8 @@ const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").
 //   - grilla: tarjetas en 3 columnas
 function Proyectos() {
   const [vista, setVista] = useState("lista");
+  const proyectos = useProyectos();
+  const { t } = useIdioma();
   const [visible, setVisible] = useState(true);
   const timer = useRef(null);
 
@@ -41,10 +46,10 @@ function Proyectos() {
 
   return (
     <section id="proyectos" className="bg-white px-4 pb-12 py-12 xl:pb-40 text-black md:pt-12 xl:px-8">
-      <h2 className="text-3xl font-medium tracking-tighter xl:text-5xl">Proyectos Seleccionados</h2>
+      <h2 className="text-3xl font-medium tracking-tighter xl:text-5xl">{t(T.proyectosSeleccionados)}</h2>
 
       {/* Selector de vista: solo en desktop */}
-      <div role="group" aria-label="Forma de ver los proyectos" className="mt-4 hidden gap-4.5 lg:flex">
+      <div role="group" aria-label={t(T.formaDeVer)} className="mt-4 hidden gap-4.5 lg:flex">
         {VISTAS.map((v) => (
           <button
             key={v}
@@ -56,7 +61,7 @@ function Proyectos() {
             }`}
           >
             {vista === v && <span aria-hidden="true">↓ </span>}
-            {v}
+            {t(NOMBRE_VISTA[v])}
           </button>
         ))}
       </div>

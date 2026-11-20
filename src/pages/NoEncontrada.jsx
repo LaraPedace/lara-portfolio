@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { TransitionLink } from "../components/PageTransition.jsx";
 import { animarLogo } from "../components/logoCaracteres.js";
 import { useSeo } from "../components/useSeo.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 import "../components/Hero.css";
 
 // Dibujo del 404, con el mismo trazo que el LARA del Hero (palos de 7, barras de 4, 22 filas)
@@ -33,7 +35,8 @@ const MASK_404 = [
 // Página 404: el "404" armado con caracteres como el LARA de la home, pero en rojo.
 // También se muestra cuando el proyecto de /proyectos/:id no existe.
 function NoEncontrada() {
-  useSeo({ titulo: "Página no encontrada", noindex: true });
+  const { t } = useIdioma();
+  useSeo({ titulo: t(T.paginaNoEncontrada), noindex: true });
   const sectionRef = useRef(null);
   const logoRef = useRef(null);
   const dustRef = useRef(null);
@@ -62,13 +65,13 @@ function NoEncontrada() {
       </div>
 
       <div className="relative flex flex-col gap-4 tracking-tighter md:mt-8">
-        <p className="text-4xl leading-none md:text-6xl font-medium tracking-tighter">Oops! Esta página no existe.</p>
+        <p className="text-4xl leading-none md:text-6xl font-medium tracking-tighter">{t(T.paginaNoExiste)}</p>
         <TransitionLink
           to="/"
           className="w-fit text-lg font-medium uppercase transition-colors duration-300 hover:text-rojo"
         >
           <span aria-hidden="true">→ </span>
-          Volver al inicio
+          {t(T.volverAlInicio)}
         </TransitionLink>
       </div>
     </main>

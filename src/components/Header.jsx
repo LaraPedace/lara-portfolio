@@ -3,9 +3,12 @@ import { useLocation } from "react-router-dom";
 import { TransitionLink } from "./PageTransition.jsx";
 import star from "../assets/img/STAR.svg";
 import { proyectos } from "../data/proyectos.js";
+import { useIdioma } from "../i18n/idiomaContext.js";
+import { T } from "../i18n/textos.js";
 
 function Header() {
   const starRef = useRef(null);
+  const { t } = useIdioma();
   // En las páginas de proyecto el fondo es negro: el header pasa a blanco sobre negro
   // (solo si el proyecto existe: si no, se ve la página 404, que es blanca)
   const { pathname } = useLocation();
@@ -28,11 +31,11 @@ function Header() {
   return (
     <header className={`fixed top-0 ${oscuro ? "bg-black/70" : "bg-white/70"} backdrop-blur-xl left-0 z-50 flex w-full items-center justify-between px-4 xl:px-8 py-2 md:py-4`}>
       <TransitionLink to="/info" className={` text-sm xl:text-base font-bold uppercase ${texto} transition-colors duration-300 hover:text-rojo`}>
-        SOBRE MÍ
+        {t(T.sobreMi)}
       </TransitionLink>
 
       {/* La estrella se dibuja con una máscara (en vez de <img>) para poder cambiarle el color */}
-      <TransitionLink to="/" aria-label="Inicio" className="group">
+      <TransitionLink to="/" aria-label={t(T.inicio)} className="group">
         <span
           ref={starRef}
           aria-hidden="true"
@@ -52,7 +55,7 @@ function Header() {
 
       {/* Lleva a la sección "Proyectos Seleccionados" de la home */}
       <TransitionLink to="/#proyectos" className={`text-sm xl:text-base font-bold uppercase ${texto} transition-colors duration-300 hover:text-rojo`}>
-        PROYECTOS
+        {t(T.proyectos)}
       </TransitionLink>
     </header>
   );
